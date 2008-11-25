@@ -5,6 +5,7 @@ all:
 	(cd src;$(MAKE))
 
 test:
+	(cd src;$(MAKE))
 	(cd t;$(MAKE) test)
 
 clean:

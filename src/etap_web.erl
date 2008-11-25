@@ -1,22 +1,27 @@
+%% @author Nick Gerakines <nick@gerakines.net> [http://socklabs.com/]
+%% @copyright 2008 Nick Gerakines
+%% @todo Support cookies.
+%% @doc Provide testing functionality for web requests.
 -module(etap_web).
 
--export([load_ok/4, request/4]).
+-export([simple_200/2, simple_404/2, build_request/4]).
 
--vsn(0.1).
--description("Adds interweb based testing to the etap suite").
+%% @doc Fetch a url and verify that it returned a 200 status.
+simple_200(Url, Desc) ->
+    Request = build_request(get, Url, [], []),
+    etap:ok(Request:status_code() == 200, Desc).
 
--import(etap, [ok/2]).
+%% @doc Fetch a url and verify that it returned a 404 status.
+simple_404(Url, Desc) ->
+    Request = build_request(get, Url, [], []),
+    etap:ok(Request:status_code() == 404, Desc).
 
-load_ok(Url, Headers, Body, Desc) ->
-    Request = request(get, Url, Headers, Body),
-    ok(Request:get(status) == 200, Desc).
-
-%% Req = etap_web:request(get, "http://google.com/", [], []).
-request(Method, Url, Headers, Body) ->
-    try http:request(get, {Url, Headers}, [], []) of
+%% @doc Create and return a request structure.
+build_request(Method, Url, Headers, Body) ->
+    try http:request(Method, {Url, Headers}, [], []) of
         {ok, {OutStatus, OutHeaders, OutBody}} ->
             etap_request:new(Method, Url, Headers, Body, OutStatus, OutHeaders, OutBody);
-        Result -> error
+        _ -> error
     catch
         _:_ -> error
     end.
