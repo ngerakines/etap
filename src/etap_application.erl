@@ -1,6 +1,6 @@
 -module(etap_application).
 
--export([start_ok/2, ensure_loaded/3, pg2_group_exists/2, pg2_group_doesntexis/2, load_ok/2]).
+-export([start_ok/2, ensure_loaded/3, pg2_group_exists/2, pg2_group_doesntexist/2, load_ok/2]).
 
 -author('Nick Gerakines <nick@gerakines.net>').
 -vsn(0.1).

@@ -1,8 +1,7 @@
 -module(etap_exception_t).
 -export([start/0]).
 
--import(etap, [plan/1,
-        end_tests/0]).
+-import(etap, [plan/1, end_tests/0]).
 -import(etap_exception, [dies_ok/2, lives_ok/2]).
 
 start() ->
