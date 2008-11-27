@@ -21,36 +21,24 @@ start_ok(AppName, Desc) ->
 
 %% @doc Assert that an application has been loaded successfully.
 ensure_loaded(AppName, AppVsn, Desc) ->
-    LoadedApps = application:loaded_applications(),
-    etap:ok(
-        lists:any(
-            fun (Elem) ->
-                case Elem of
-                    {AppName, _, AppVsn} -> true;
-                    _ -> false
-                end
-            end,
-            LoadedApps
-        ) == true,
+    etap:any(
+        fun(Match) -> case Match of {AppName, _, AppVsn} -> true; _ -> false end end,
+        application:loaded_applications(),
         Desc
     ).
 
 %% @doc Assert that a pg2 group exists.
 pg2_group_exists(GroupName, Desc) ->
-    etap:ok(
-        lists:any(
-            fun (Elem) -> GroupName == Elem end,
-            pg2:which_groups()
-        ) == true,
+    etap:any(
+        fun(Match) -> Match == GroupName end,
+        pg2:which_groups(),
         Desc
     ).
 
 %% @doc Assert that a pg2 group does not exists.
 pg2_group_doesntexist(GroupName, Desc) ->
-    etap:ok(
-        lists:any(
-            fun (Elem) -> GroupName == Elem end,
-            pg2:which_groups()
-        ) == false,
+    etap:none(
+        fun(Match) -> Match == GroupName end,
+        pg2:which_groups(),
         Desc
     ).
