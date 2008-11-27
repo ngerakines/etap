@@ -30,7 +30,8 @@
 -module(etap).
 -export([
     ensure_test_server/0, start_etap_server/0, test_server/1,
-    diag/1, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3
+    diag/1, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
+    any/3, none/3
 ]).
 
 -record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0}).
@@ -58,6 +59,12 @@ not_ok(Expr, Desc) -> mk_tap(Expr == false, Desc).
 
 %% @doc Assert that two values are the same.
 is(Got, Expected, Desc) -> mk_tap(Got == Expected, Desc).
+
+any(Got, Items, Desc) ->
+    is(lists:any(Got, Items), true, Desc).
+
+none(Got, Items, Desc) ->
+    is(lists:any(Got, Items), false, Desc).
 
 %% @doc Assert that two values are not the same.
 isnt(Got, Expected, Desc) -> mk_tap(Got /= Expected, Desc).

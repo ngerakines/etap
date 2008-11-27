@@ -2,7 +2,7 @@
 -export([start/0]).
 
 start() ->
-    etap:plan(42),
+    etap:plan(48),
     etap:diag("Test the etap_can module."),
     test_etap(),
     test_etap_application(),
@@ -28,6 +28,10 @@ test_etap() ->
     etap_can:can_ok(etap, is, 3),
     etap_can:can_ok(etap, isnt),
     etap_can:can_ok(etap, isnt, 3),
+    etap_can:can_ok(etap, any),
+    etap_can:can_ok(etap, any, 3),
+    etap_can:can_ok(etap, none),
+    etap_can:can_ok(etap, none, 3),
     ok.
 
 test_etap_application() ->
@@ -59,6 +63,8 @@ test_etap_exception() ->
     etap_can:can_ok(etap_exception, dies_ok, 2),
     etap_can:can_ok(etap_exception, lives_ok),
     etap_can:can_ok(etap_exception, lives_ok, 2),
+    etap_can:can_ok(etap_exception, throws_ok),
+    etap_can:can_ok(etap_exception, throws_ok, 3),
     ok.
 
 test_etap_request() ->
