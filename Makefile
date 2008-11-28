@@ -1,11 +1,9 @@
-ERL_RUN = erl -run 
-ERL_STOP = -run init stop -noshell
 
 all:
 	(cd src;$(MAKE))
 
-test:
-	(cd src;$(MAKE))
+test: all
+	(cd t;$(MAKE))
 	(cd t;$(MAKE) test)
 
 clean:

@@ -60,14 +60,16 @@ not_ok(Expr, Desc) -> mk_tap(Expr == false, Desc).
 %% @doc Assert that two values are the same.
 is(Got, Expected, Desc) -> mk_tap(Got == Expected, Desc).
 
+%% @doc Assert that two values are not the same.
+isnt(Got, Expected, Desc) -> mk_tap(Got /= Expected, Desc).
+
+%% @doc Assert that an item is in a list.
 any(Got, Items, Desc) ->
     is(lists:any(Got, Items), true, Desc).
 
+%% @doc Assert that an item is not in a list.
 none(Got, Items, Desc) ->
     is(lists:any(Got, Items), false, Desc).
-
-%% @doc Assert that two values are not the same.
-isnt(Got, Expected, Desc) -> mk_tap(Got /= Expected, Desc).
 
 % ---
 % Internal / Private functions
