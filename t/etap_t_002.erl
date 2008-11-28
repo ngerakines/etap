@@ -2,7 +2,7 @@
 -export([start/0]).
 
 start() ->
-    etap:plan(48),
+    etap:plan(55),
     etap:diag("Test the etap_can module."),
     test_etap(),
     test_etap_application(),
@@ -10,6 +10,7 @@ start() ->
     test_etap_exception(),
     test_etap_request(),
     test_etap_web(),
+    test_etap_process(),
     etap:end_tests().
 
 test_etap() ->
@@ -81,4 +82,14 @@ test_etap_web() ->
     etap_can:can_ok(etap_web, simple_404, 2),
     etap_can:can_ok(etap_web, build_request),
     etap_can:can_ok(etap_web, build_request, 4),
+    ok.
+
+test_etap_process() ->
+    etap_can:loaded_ok(etap_process, "module 'etap_process' loaded"),
+    etap_can:can_ok(etap_process, is_pid),
+    etap_can:can_ok(etap_process, is_pid, 2),
+    etap_can:can_ok(etap_process, is_alive),
+    etap_can:can_ok(etap_process, is_alive, 2),
+    etap_can:can_ok(etap_process, is_mfa),
+    etap_can:can_ok(etap_process, is_mfa, 3),
     ok.

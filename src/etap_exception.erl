@@ -16,6 +16,7 @@ dies_ok(F, Desc) ->
 lives_ok(F, Desc) ->
     etap:is(try_this(F), success, Desc).
 
+%% @doc Assert that the exception thrown by a function matches the given exception.
 throws_ok(F, Exception, Desc) ->
     etap:ok((fun(Resp) ->
         case Resp of

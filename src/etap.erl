@@ -1,10 +1,40 @@
+%% Copyright (c) 2008 Nick Gerakines <nick@gerakines.net>
+%% 
+%% Permission is hereby granted, free of charge, to any person
+%% obtaining a copy of this software and associated documentation
+%% files (the "Software"), to deal in the Software without
+%% restriction, including without limitation the rights to use,
+%% copy, modify, merge, publish, distribute, sublicense, and/or sell
+%% copies of the Software, and to permit persons to whom the
+%% Software is furnished to do so, subject to the following
+%% conditions:
+%% 
+%% The above copyright notice and this permission notice shall be
+%% included in all copies or substantial portions of the Software.
+%% 
+%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+%% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+%% OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+%% NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+%% HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+%% WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+%% FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+%% OTHER DEALINGS IN THE SOFTWARE.
+%%
 %% ChangeLog
+%% - 2008-11-28 ngerakines
+%%   - Minor documentation and build changes.
+%%   - Added etap_process module and updated test suite accordingly.
+%% - 2008-11-27 ngerakines
+%%   - Added etap:any/3, etap:none/3 and etap_excecption:throws_ok/3.
+%%   - Internal cleanup of etap modules.
 %% - 2008-11-25 ngerakines
 %%   - Consolidated test server and plan server.
 %%   - Added meta information when creating new plan.
 %%   - Added lots of documentation.
 %%   - Cleaned up the current test suite.
 %%   - Started extending testing capabilities of etap_request.
+%% 
 %% @author Nick Gerakines <nick@gerakines.net> [http://socklabs.com/]
 %% @author Jeremy Wall <jeremy@marzhillstudios.com>
 %% @version 0.3
