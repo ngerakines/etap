@@ -4,7 +4,7 @@
 -record(tester, {xx, yy, zz}).
 
 start() ->
-    etap:plan(13),
+    etap:plan(15),
     etap:diag("Test the core etap module and it's functions."),
     etap:ok(true, "Proving etap:ok/2 needs true"),
     etap:not_ok(false, "Proving etap:not_ok/2 needs false"),
@@ -23,4 +23,6 @@ start() ->
     etap:any(fun([{record, value} | _]) -> true; (_)-> false  end, [[{something, nothing}, {somewhere, nowhere}], [{name, nick}, {has_family, true}], [{record, value}, {term, atom}]], "Proving etap:none/3 works with simple structures"),
     etap:none(fun(the_bitch) -> true; (_)-> false  end, lists:seq(1, 99), "Proving etap:none/3 works with simple structures"),
     etap:none(fun([{color, red} | _]) -> true; (_)-> false  end, [[{something, nothing}, {somewhere, nowhere}], [{name, nick}, {has_family, true}], [{record, value}, {term, atom}]], "Proving etap:none/3 works with simple structures"),
+    etap:fun_is(fun(Expected) -> case Expected of "abc" ++ _ -> true; _ -> false end end, "abcdefg", "fun_is/3 works with simple lists"),
+    etap:fun_is(fun(Expected) -> case Expected of {foo, _} -> true; _ -> false end end, {foo, bar}, "fun_is/3 works with simple lists"),
     etap:end_tests().

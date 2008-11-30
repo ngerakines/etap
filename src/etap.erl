@@ -26,6 +26,7 @@
 %%   - Fixed by in test results where failed tests weren't being recorded.
 %%   - Added warning when planned vs executed tests aren't the same.
 %%   - Bumping rev to 0.3.1.
+%%   - Added etap:fun_is/3.
 %% - 2008-11-28 ngerakines
 %%   - Minor documentation and build changes.
 %%   - Added etap_process module and updated test suite accordingly.
@@ -65,7 +66,7 @@
 -export([
     ensure_test_server/0, start_etap_server/0, test_server/1,
     diag/1, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
-    any/3, none/3
+    any/3, none/3, fun_is/3
 ]).
 
 -record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0}).
@@ -92,7 +93,14 @@ ok(Expr, Desc) -> mk_tap(Expr == true, Desc).
 not_ok(Expr, Desc) -> mk_tap(Expr == false, Desc).
 
 %% @doc Assert that two values are the same.
-is(Got, Expected, Desc) -> mk_tap(Got == Expected, Desc).
+is(Got, Expected, Desc) ->
+    case mk_tap(Got == Expected, Desc) of
+        false ->
+            diag(io_lib:format("Got ~p~n", [Got])),
+            diag(io_lib:format("Expected ~p~n", [Expected])),
+            false;
+        true -> true
+    end.
 
 %% @doc Assert that two values are not the same.
 isnt(Got, Expected, Desc) -> mk_tap(Got /= Expected, Desc).
@@ -104,6 +112,10 @@ any(Got, Items, Desc) ->
 %% @doc Assert that an item is not in a list.
 none(Got, Items, Desc) ->
     is(lists:any(Got, Items), false, Desc).
+
+%% @doc Use an anonymous function to assert a pattern match.
+fun_is(Fun, Expected, Desc) when is_function(Fun) ->
+    is(Fun(Expected), true, Desc).
 
 % ---
 % Internal / Private functions
@@ -182,11 +194,12 @@ mk_tap(Result, Desc) ->
     case Result of
         true ->
             etap_server ! {self(), log, lists:concat(["ok ", N + 1, " -  ",  Desc])},
-            etap_server ! {self(), pass, 1};
-            
+            etap_server ! {self(), pass, 1},
+            true;
         false ->
             etap_server ! {self(), log, lists:concat(["not ok ", N + 1,  " -  ",  Desc])},
-            etap_server ! {self(), fail, 1}
+            etap_server ! {self(), fail, 1},
+            false
     end.
 
 %% @private
