@@ -22,6 +22,10 @@
 %% OTHER DEALINGS IN THE SOFTWARE.
 %%
 %% ChangeLog
+%% - 2008-11-30 ngerakines
+%%   - Fixed by in test results where failed tests weren't being recorded.
+%%   - Added warning when planned vs executed tests aren't the same.
+%%   - Bumping rev to 0.3.1.
 %% - 2008-11-28 ngerakines
 %%   - Minor documentation and build changes.
 %%   - Added etap_process module and updated test suite accordingly.
@@ -37,7 +41,7 @@
 %% 
 %% @author Nick Gerakines <nick@gerakines.net> [http://socklabs.com/]
 %% @author Jeremy Wall <jeremy@marzhillstudios.com>
-%% @version 0.3
+%% @version 0.3.1
 %% @copyright 2007-2008 Jeremy Wall
 %% @reference http://testanything.org/wiki/index.php/Main_Page
 %% @reference http://en.wikipedia.org/wiki/Test_Anything_Protocol
