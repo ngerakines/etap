@@ -2,7 +2,7 @@
 -export([start/0]).
 
 start() ->
-    etap:plan(55),
+    etap:plan(60),
     etap:diag("Test the etap_can module."),
     test_etap(),
     test_etap_application(),

@@ -4,7 +4,7 @@
 -record(tester, {xx, yy, zz}).
 
 start() ->
-    etap:plan(9),
+    etap:plan(13),
     etap:diag("Test the core etap module and it's functions."),
     etap:ok(true, "Proving etap:ok/2 needs true"),
     etap:not_ok(false, "Proving etap:not_ok/2 needs false"),

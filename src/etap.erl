@@ -120,7 +120,7 @@ ensure_test_server() ->
 start_etap_server() ->
     catch register(etap_server, self()),
     proc_lib:init_ack(ok),
-    etap:test_server(#test_state{}).
+    etap:test_server(#test_state{ planned = 0, count = 0, pass = 0, fail = 0, skip = 0 }).
 
 
 %% @private
@@ -134,21 +134,21 @@ test_server(State) ->
             io:format("1..~p~n", [N]),
             io:format("# Current time local ~s~n", [datetime(erlang:localtime())]),
             io:format("# Using etap version 0.3~n"),
-            #test_state{
+            State#test_state{
                 planned = N, count = 0, pass = 0, fail = 0, skip = 0
             };
         {_From, pass, N} ->
-            #test_state{
+            State#test_state{
                 count = State#test_state.count + N,
                 pass = State#test_state.pass + N
             };
         {_From, fail, N} ->
-            #test_state{
+            State#test_state{
                 count = State#test_state.count + N,
                 fail = State#test_state.fail + N
             };
         {_From, skip, N} ->
-            #test_state{
+            State#test_state{
                 count = State#test_state.count + N,
                 skip = State#test_state.skip + N
             };
@@ -161,6 +161,10 @@ test_server(State) ->
         {From, count} ->
             From ! State#test_state.count,
             State;
+        done when State#test_state.planned =/= State#test_state.count->
+            io:format("# WARNING! Planned ~p but executed ~p.~n", [State#test_state.planned, State#test_state.count]),
+            io:format("Ran ~p Tests Passed: ~p Failed: ~p Skipped: ~p~n~n", [State#test_state.count, State#test_state.pass, State#test_state.fail, State#test_state.skip]),
+            exit(normal);
         done ->
             io:format("Ran ~p Tests Passed: ~p Failed: ~p Skipped: ~p~n~n", [State#test_state.count, State#test_state.pass, State#test_state.fail, State#test_state.skip]),
             exit(normal)
@@ -173,11 +177,11 @@ mk_tap(Result, Desc) ->
     N = lib:sendw(etap_server, count),
     case Result of
         true ->
-            etap_server ! {self(), log, lists:concat(["ok ", N, " -  ",  Desc])},
+            etap_server ! {self(), log, lists:concat(["ok ", N + 1, " -  ",  Desc])},
             etap_server ! {self(), pass, 1};
             
         false ->
-            etap_server ! {self(), log, lists:concat(["not ok ", N, " -  ",  Desc])},
+            etap_server ! {self(), log, lists:concat(["not ok ", N + 1,  " -  ",  Desc])},
             etap_server ! {self(), fail, 1}
     end.
 

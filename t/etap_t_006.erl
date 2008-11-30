@@ -2,7 +2,7 @@
 -export([start/0, start_loop/1]).
 
 start() ->
-    etap:plan(2),
+    etap:plan(3),
 
     etap_process:is_pid(spawn(?MODULE, start_loop, [test_group_a]), "Spawned process is a pid"),
     etap_process:is_alive(spawn(?MODULE, start_loop, [test_group_a]), "Spawned process is alive"),

@@ -2,7 +2,7 @@
 -export([start/0, start_loop/1]).
 
 start() ->
-    etap:plan(2),
+    etap:plan(6),
     etap_application:load_ok(inets, "Application inets-5.0.12 loads"),
     etap_application:start_ok(inets, "Application inets-5.0.12 starts"),
     etap_application:ensure_loaded(inets, "5.0.12", "Application inets-5.0.12 is loaded and running."),
