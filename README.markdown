@@ -12,6 +12,27 @@ These modules are not meant to compete with eunit, but to offer a more general t
     http://en.wikipedia.org/wiki/Test_Anything_Protocol
     http://testanything.org/wiki/index.php/Main_Page
 
+CREATING TESTS
+==============
+
+A "test" is any number of etap:\* or etap\_\*:\* tests that are part of a test plan. When a plan is created using etap:plan/1, a process is started that tracks the status of the tests executed and handles diagnostic output.
+
+Consider the following example test plan:
+
+    etap:plan(3),
+    etap:ok(true, "the 'true' atom is recognized"),
+    etap:is(1 + 1, 2, "simple math"),
+    etap:isnt(2 + 2, 5, "some would argue"),
+    etap:end_tests().
+
+At this time, etap does not support pattern matching. To work around this there are a number of utility tests that can be used. The etap:any/3, etap:none/3 and etap:fun_is/3 use functions to return either 'true' or 'false'.
+
+    Numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    FunWithNumbers = fun(X) case X of [1, 2, 3 | _] -> true; _ -> false end end,
+    etap:fun_is(FunWithNumbers, Numbers, "Match the first three numbers").
+
+There are many examples in t/*.erl.
+
 BUILD & INSTALL
 ===============
 
@@ -35,7 +56,7 @@ SUPPORTED FUNCTIONALITY
 
 There are a number of proposals listed on the TAP wiki that are not supported by this library. Please be aware of this when creating your tests.
 
- * NOT SUPPORTED: TAP diagnostic syntax
+ * LIMITED SUPPORTED: TAP diagnostic syntax
  * LIMITED SUPPORTED: TAP meta information
  * NOT SUPPORTED: TAP logging syntax
  * NOT SUPPORTED: Test groups
@@ -47,5 +68,5 @@ There are a number of proposals listed on the TAP wiki that are not supported by
 CREDITS
 =======
 
+2008 Nick Gerakines<br />
 2007-2008 Jeremy Wall
-2008 Nick Gerakines

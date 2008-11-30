@@ -27,6 +27,8 @@
 %%   - Added warning when planned vs executed tests aren't the same.
 %%   - Bumping rev to 0.3.1.
 %%   - Added etap:fun_is/3.
+%%   - Updated the README
+%%   - Added limited support for the dianostic syntax
 %% - 2008-11-28 ngerakines
 %%   - Minor documentation and build changes.
 %%   - Added etap_process module and updated test suite accordingly.
@@ -96,8 +98,11 @@ not_ok(Expr, Desc) -> mk_tap(Expr == false, Desc).
 is(Got, Expected, Desc) ->
     case mk_tap(Got == Expected, Desc) of
         false ->
-            diag(io_lib:format("Got ~p~n", [Got])),
-            diag(io_lib:format("Expected ~p~n", [Expected])),
+            etap_server ! {self(), log, "    ---"},
+            etap_server ! {self(), log, io_lib:format("    description: ~p", [Desc])},
+            etap_server ! {self(), log, io_lib:format("    found:       ~p", [Got])},
+            etap_server ! {self(), log, io_lib:format("    wanted:      ~p", [Expected])},
+            etap_server ! {self(), log, "    ..."},
             false;
         true -> true
     end.
