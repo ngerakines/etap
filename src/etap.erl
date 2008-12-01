@@ -22,6 +22,9 @@
 %% OTHER DEALINGS IN THE SOFTWARE.
 %%
 %% ChangeLog
+%% - 2008-12-01 ngerakines
+%%   - Fixed bug in test etap_t_002
+%%   - Minor/Misc code cleanup
 %% - 2008-11-30 ngerakines
 %%   - Fixed by in test results where failed tests weren't being recorded.
 %%   - Added warning when planned vs executed tests aren't the same.

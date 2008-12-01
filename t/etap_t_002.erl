@@ -33,8 +33,8 @@ test_etap() ->
     etap_can:can_ok(etap, any, 3),
     etap_can:can_ok(etap, none),
     etap_can:can_ok(etap, none, 3),
-    etap_can:can_ok(etap, is_fun),
-    etap_can:can_ok(etap, is_fun, 3),
+    etap_can:can_ok(etap, fun_is),
+    etap_can:can_ok(etap, fun_is, 3),
     ok.
 
 test_etap_application() ->
