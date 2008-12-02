@@ -12,4 +12,4 @@ clean:
 	(cd t;$(MAKE) clean)
 
 dist-src: clean
-	tar zcvf etap-0.3.1.tgz src/ ebin/ support/ Makefile ipwcore
+	tar zcvf etap-0.3.1.tgz src/ ebin/ support/ Makefile
