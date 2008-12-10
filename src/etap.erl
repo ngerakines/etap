@@ -22,9 +22,11 @@
 %% OTHER DEALINGS IN THE SOFTWARE.
 %%
 %% ChangeLog
+%% - 2008-12-09 ngerakines
+%%   - Added output displaying test run time in seconds.
 %% - 2008-12-01 ngerakines
-%%   - Fixed bug in test etap_t_002
-%%   - Minor/Misc code cleanup
+%%   - Fixed bug in test etap_t_002.
+%%   - Minor/Misc code cleanup.
 %% - 2008-11-30 ngerakines
 %%   - Fixed by in test results where failed tests weren't being recorded.
 %%   - Added warning when planned vs executed tests aren't the same.
@@ -74,7 +76,7 @@
     any/3, none/3, fun_is/3
 ]).
 
--record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0}).
+-record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, start_time}).
 
 % ---
 % External / Public functions
@@ -159,7 +161,7 @@ test_server(State) ->
             io:format("# Current time local ~s~n", [datetime(erlang:localtime())]),
             io:format("# Using etap version 0.3~n"),
             State#test_state{
-                planned = N, count = 0, pass = 0, fail = 0, skip = 0
+                planned = N, count = 0, pass = 0, fail = 0, skip = 0, start_time = erlang:now()
             };
         {_From, pass, N} ->
             State#test_state{
@@ -186,11 +188,17 @@ test_server(State) ->
             From ! State#test_state.count,
             State;
         done when State#test_state.planned =/= State#test_state.count->
+            {Sm, Ss, Si} = State#test_state.start_time,
+            {Em, Es, Ei} = erlang:now(),
+            {Tm, Ts, Ti} = {Em - Sm, Es - Ss, Ei - Si},
             io:format("# WARNING! Planned ~p but executed ~p.~n", [State#test_state.planned, State#test_state.count]),
-            io:format("Ran ~p Tests Passed: ~p Failed: ~p Skipped: ~p~n~n", [State#test_state.count, State#test_state.pass, State#test_state.fail, State#test_state.skip]),
+            io:format("Ran ~p Tests Passed: ~p Failed: ~p Skipped: ~p Time: ~B.~6..0B seconds.~n~n", [State#test_state.count, State#test_state.pass, State#test_state.fail, State#test_state.skip, Tm * 1000 + Ts, Ti]),
             exit(normal);
         done ->
-            io:format("Ran ~p Tests Passed: ~p Failed: ~p Skipped: ~p~n~n", [State#test_state.count, State#test_state.pass, State#test_state.fail, State#test_state.skip]),
+            {Sm, Ss, Si} = State#test_state.start_time,
+            {Em, Es, Ei} = erlang:now(),
+            {Tm, Ts, Ti} = {Em - Sm, Es - Ss, Ei - Si},
+            io:format("Ran ~p Tests Passed: ~p Failed: ~p Skipped: ~p Time: ~B.~6..0B seconds.~n~n", [State#test_state.count, State#test_state.pass, State#test_state.fail, State#test_state.skip, Tm * 1000 + Ts, Ti]),
             exit(normal)
     end,
     test_server(NewState).
