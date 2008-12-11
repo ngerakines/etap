@@ -22,6 +22,8 @@
 %% OTHER DEALINGS IN THE SOFTWARE.
 %%
 %% ChangeLog
+%% - 2008-12-10 ngerakines
+%%   - Adding support for non-get requests in etap_web.
 %% - 2008-12-09 ngerakines
 %%   - Added output displaying test run time in seconds.
 %% - 2008-12-01 ngerakines
