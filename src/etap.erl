@@ -22,6 +22,8 @@
 %% OTHER DEALINGS IN THE SOFTWARE.
 %%
 %% ChangeLog
+%% - 2008-12-11 ngerakines
+%%   - Added etap:diag_time/0
 %% - 2008-12-10 ngerakines
 %%   - Adding support for non-get requests in etap_web.
 %% - 2008-12-09 ngerakines
@@ -75,7 +77,7 @@
 -export([
     ensure_test_server/0, start_etap_server/0, test_server/1,
     diag/1, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
-    any/3, none/3, fun_is/3
+    any/3, none/3, fun_is/3, diag_time/0
 ]).
 
 -record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, start_time}).
@@ -128,6 +130,14 @@ none(Got, Items, Desc) ->
 %% @doc Use an anonymous function to assert a pattern match.
 fun_is(Fun, Expected, Desc) when is_function(Fun) ->
     is(Fun(Expected), true, Desc).
+
+diag_time() ->
+    State = lib:sendw(etap_server, state),
+    {Sm, Ss, Si} = State#test_state.start_time,
+    {Em, Es, Ei} = erlang:now(),
+    {Tm, Ts, Ti} = {Em - Sm, Es - Ss, Ei - Si},
+    Message = io_lib:format("Time: ~B.~6..0B seconds.", [(Tm * 1000) + Ts, Ti]),
+    diag(Message).
 
 % ---
 % Internal / Private functions
@@ -200,7 +210,7 @@ test_server(State) ->
             {Sm, Ss, Si} = State#test_state.start_time,
             {Em, Es, Ei} = erlang:now(),
             {Tm, Ts, Ti} = {Em - Sm, Es - Ss, Ei - Si},
-            io:format("Ran ~p Tests Passed: ~p Failed: ~p Skipped: ~p Time: ~B.~6..0B seconds.~n~n", [State#test_state.count, State#test_state.pass, State#test_state.fail, State#test_state.skip, Tm * 1000 + Ts, Ti]),
+            io:format("Ran ~p Tests Passed: ~p Failed: ~p Skipped: ~p Time: ~B.~6..0B seconds.~n~n", [State#test_state.count, State#test_state.pass, State#test_state.fail, State#test_state.skip, (Tm * 1000) + Ts, Ti]),
             exit(normal)
     end,
     test_server(NewState).
