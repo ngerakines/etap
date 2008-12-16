@@ -3,6 +3,9 @@ all:
 	mkdir -p ebin
 	(cd src;$(MAKE))
 
+doc:
+	(cd src; $(MAKE) doc)
+
 test: all
 	(cd t;$(MAKE))
 	(cd t;$(MAKE) test)

@@ -4,6 +4,7 @@ ERL := erl
 ERLC := $(ERL)c
 
 INCLUDE_DIRS := ../include
+DOC_DIR := ../doc
 EBIN_DIRS := 
 ERLC_FLAGS := -W $(INCLUDE_DIRS:../%=-I ../%) $(EBIN_DIRS:%=-pa %)
 
@@ -35,6 +36,3 @@ $(EBIN_DIR)/%.$(EMULATOR): %.erl
 ./%.$(EMULATOR): %.erl
 	$(ERLC) $(ERLC_FLAGS) -o . $<
 
-$(DOC_DIR)/%.html: %.erl
-	$(ERL) -noshell -run edoc file $< -run init stop
-	mv *.html $(DOC_DIR)
