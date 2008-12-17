@@ -27,7 +27,8 @@
 -module(etap_can).
 
 -export([
-    loaded_ok/2, can_ok/2, can_ok/3
+    loaded_ok/2, can_ok/2, can_ok/3,
+    has_attrib/2, is_attrib/3, is_behaviour/2
 ]).
 
 % ---
@@ -47,6 +48,19 @@ can_ok(M, F, A) when is_atom(M); is_atom(F), is_number(A) ->
     test_loaded(M) orelse try_load(M),
     etap:ok(function_exists(M, F, A), lists:concat([M, " can ", F, "/", A])).
 
+has_attrib(M, A) when is_atom(M) andalso is_atom(A) ->
+    test_loaded(M) orelse try_load(M),
+    etap:ok(attribute_exists(M, A),
+        lists:concat([M, " has attribute ", A])).
+
+is_attrib(M, A, V) when is_atom(M) andalso is_atom(A) ->
+    test_loaded(M) orelse try_load(M),
+    etap:ok(attribute_exists(M, A, V),
+        lists:concat([M, "'s ", A, " is ", V])).
+
+is_behaviour(M, B) when is_atom(M) andalso is_atom(B) ->
+    is_attrib(M, behaviour, B).
+
 % ---
 % Internal / Private functions
 
@@ -65,6 +79,32 @@ try_load(M) ->
        {module, _Loaded} -> true;
         _ -> false
     end.
+
+%% @private
+%% @doc determine module attribute exists
+attribute_exists(M, A) ->
+    case lists:keysearch(A, 1, M:module_info(attributes)) of
+        {value, _} -> true;
+        _ -> false
+    end.
+attribute_exists(M, A, V) ->
+    F = fun(I) -> 
+        case I of
+            V ->
+                true;
+            _ ->
+                false
+        end
+    end,
+    case lists:keysearch(A, 1, M:module_info(attributes)) of
+        {value, {A, L}} when is_list(L) -> 
+            lists:any(F, L);
+        {value, {A, _}} -> 
+            true;
+        _ ->
+            false
+    end.
+
 
 %% @private
 %% @doc Determine if a function exists within a function by
