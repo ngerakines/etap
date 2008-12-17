@@ -37,7 +37,7 @@
 
 %% @doc Assert that response status code is the given status code.
 status_is(Code, Desc) ->
-    etap:is(Code, status_code(), Desc).
+    etap:is(status_code(), Code, Desc).
 
 % ---
 % Accessor functions
