@@ -69,4 +69,5 @@ CREDITS
 =======
 
 2008 Nick Gerakines<br />
-2007-2008 Jeremy Wall
+2007-2008 Jeremy Wall<br />
+2008 Jacob Vorreuter
