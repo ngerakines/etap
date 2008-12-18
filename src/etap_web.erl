@@ -40,8 +40,9 @@ simple_404(Url, Desc) ->
     Request:status_is(404, Desc).
 
 %% @doc Create and return a request structure.
-build_request(get, Url, Headers, Body) ->
-    try http:request(get, {Url, Headers}, [], []) of
+build_request(Method, Url, Headers, Body) 
+ when Method==options;Method==get;Method==head;Method==delete;Method==trace ->
+	try http:request(Method, {Url, Headers}, [], []) of
         {ok, {OutStatus, OutHeaders, OutBody}} ->
             etap_request:new(get, Url, Headers, Body, OutStatus, OutHeaders, OutBody);
         _ -> error
@@ -50,8 +51,9 @@ build_request(get, Url, Headers, Body) ->
     end;
 
 %% @doc Create and return a request structure.
-build_request(Method, Url, Headers, Body) ->
-    try http:request(Method, {Url, Headers, [], Body}, [], []) of
+build_request(Method, Url, Headers, Body)
+ when Method==post;Method==put ->
+	try http:request(Method, {Url, Headers, [], Body}, [], []) of
         {ok, {OutStatus, OutHeaders, OutBody}} ->
             etap_request:new(Method, Url, Headers, Body, OutStatus, OutHeaders, OutBody);
         _ -> error
