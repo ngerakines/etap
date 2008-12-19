@@ -2,7 +2,7 @@ include ../support/include.mk
 
 all: $(EBIN_FILES)
 
-doc:
+doc: 
 	mkdir -p $(DOC_DIR)
 	$(ERL) -noshell -run edoc files $(ERL_SOURCES) -run init stop
 	mv *.html *.png *.css $(DOC_DIR)

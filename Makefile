@@ -1,3 +1,4 @@
+.PHONY: doc
 
 all:
 	mkdir -p ebin

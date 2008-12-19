@@ -20,6 +20,7 @@ EBIN_DIR := ../ebin
 EMULATOR := beam
 
 ERL_SOURCES := $(wildcard *.erl)
+ERL_DOCS := $(wildcard *.erl) $(wildcard *.edoc)
 ERL_HEADERS := $(wildcard *.hrl) $(wildcard ../include/*.hrl)
 ERL_OBJECTS := $(ERL_SOURCES:%.erl=$(EBIN_DIR)/%.$(EMULATOR))
 ERL_OBJECTS_LOCAL := $(ERL_SOURCES:%.erl=./%.$(EMULATOR))
@@ -36,3 +37,4 @@ $(EBIN_DIR)/%.$(EMULATOR): %.erl
 ./%.$(EMULATOR): %.erl
 	$(ERLC) $(ERLC_FLAGS) -o . $<
 
+FORCE:
