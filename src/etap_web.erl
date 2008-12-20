@@ -44,7 +44,7 @@ build_request(Method, Url, Headers, Body)
  when Method==options;Method==get;Method==head;Method==delete;Method==trace ->
 	try http:request(Method, {Url, Headers}, [], []) of
         {ok, {OutStatus, OutHeaders, OutBody}} ->
-            etap_request:new(get, Url, Headers, Body, OutStatus, OutHeaders, OutBody);
+            etap_request:new(Method, Url, Headers, Body, OutStatus, OutHeaders, OutBody);
         _ -> error
     catch
         _:_ -> error

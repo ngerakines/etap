@@ -36,5 +36,3 @@ $(EBIN_DIR)/%.$(EMULATOR): %.erl
 
 ./%.$(EMULATOR): %.erl
 	$(ERLC) $(ERLC_FLAGS) -o . $<
-
-FORCE:
