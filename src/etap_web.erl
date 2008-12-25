@@ -42,7 +42,7 @@ simple_404(Url, Desc) ->
 %% @doc Create and return a request structure.
 build_request(Method, Url, Headers, Body) 
  when Method==options;Method==get;Method==head;Method==delete;Method==trace ->
-	try http:request(Method, {Url, Headers}, [], []) of
+	try http:request(Method, {Url, Headers}, [{autoredirect, false}], []) of
         {ok, {OutStatus, OutHeaders, OutBody}} ->
             etap_request:new(Method, Url, Headers, Body, OutStatus, OutHeaders, OutBody);
         _ -> error
@@ -53,7 +53,7 @@ build_request(Method, Url, Headers, Body)
 %% @doc Create and return a request structure.
 build_request(Method, Url, Headers, Body)
  when Method==post;Method==put ->
-	try http:request(Method, {Url, Headers, [], Body}, [], []) of
+	try http:request(Method, {Url, Headers, [], Body}, [{autoredirect, false}], []) of
         {ok, {OutStatus, OutHeaders, OutBody}} ->
             etap_request:new(Method, Url, Headers, Body, OutStatus, OutHeaders, OutBody);
         _ -> error
