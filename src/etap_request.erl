@@ -29,7 +29,8 @@
 
 -export([
     method/0, url/0, status/0, status_code/0, status_line/0, rheaders/0,
-    has_rheader/1, rheader/1, rbody/0
+    has_rheader/1, rheader/1, rbody/0, header_is/3, body_is/2,
+    body_has_string/2
 ]).
 
 % ---
@@ -38,6 +39,19 @@
 %% @doc Assert that response status code is the given status code.
 status_is(Code, Desc) ->
     etap:is(status_code(), Code, Desc).
+
+header_is(Name, Value, Desc) ->
+    etap:is(rheader(Name), Value, Desc).
+
+body_is(Value, Desc) ->
+    etap:is(rbody(), Value, Desc).
+
+body_has_string(String, Desc) when is_list(OutBody), is_list(String) ->
+    etap:isnt(
+        string:str(OutBody, String),
+        0,
+        Desc
+    ).
 
 % ---
 % Accessor functions
