@@ -22,6 +22,22 @@
 %% OTHER DEALINGS IN THE SOFTWARE.
 %%
 %% ChangeLog
+%% - 2008-12-28 ngerakines
+%%   - Added etap:is_greater/3
+%%   - Added etap_string module and updated test suite
+%% - 2008-12-26 ngerakines
+%%   - Cleaned etap_web:build_request/4 module handling of redirects
+%%   - Added functionality to etal_request
+%% - 2008-12-17 Jacob Vorreuter, ngerakines, Jeremy Wall
+%%   - Cleaned etap_web:build_request/4 module handling for get/post/put requests
+%%   - Documentation updates / cleanup
+%% - 2008-12-17 Jacob Vorreuter, ngerakines, Jeremy Wall
+%%   - Fixing bug in etap_request:status_is/2
+%%   - Added attribute inspection tests to etap_can
+%%   - Added Jacob to credits list
+%% - 2008-12-15 Jeremy Wall, ngerakines
+%%   - Added doc targets to build
+%%   - Misc build cleanup
 %% - 2008-12-11 ngerakines
 %%   - Added etap:diag_time/0
 %% - 2008-12-10 ngerakines
@@ -77,7 +93,7 @@
 -export([
     ensure_test_server/0, start_etap_server/0, test_server/1,
     diag/1, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
-    any/3, none/3, fun_is/3, diag_time/0
+    any/3, none/3, fun_is/3, diag_time/0, is_greater/3
 ]).
 
 -record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, start_time}).
@@ -118,6 +134,10 @@ is(Got, Expected, Desc) ->
 
 %% @doc Assert that two values are not the same.
 isnt(Got, Expected, Desc) -> mk_tap(Got /= Expected, Desc).
+
+%% @doc Assert that an integer is greater than another.
+is_greater(ValueA, ValueB, Desc) when is_integer(ValueA), is_integer(ValueB) ->
+    mk_tap(ValueA > ValueB, Desc).
 
 %% @doc Assert that an item is in a list.
 any(Got, Items, Desc) ->

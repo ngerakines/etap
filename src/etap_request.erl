@@ -47,11 +47,7 @@ body_is(Value, Desc) ->
     etap:is(rbody(), Value, Desc).
 
 body_has_string(String, Desc) when is_list(OutBody), is_list(String) ->
-    etap:isnt(
-        string:str(OutBody, String),
-        0,
-        Desc
-    ).
+    etap_string:contains_ok(OutBody, String, Desc).
 
 % ---
 % Accessor functions

@@ -2,7 +2,7 @@
 -export([start/0]).
 
 start() ->
-    etap:plan(65),
+    etap:plan(67),
     etap:diag("Test the etap_can module."),
     test_etap(),
     test_etap_application(),
@@ -27,6 +27,8 @@ test_etap() ->
     etap_can:can_ok(etap, not_ok, 2),
     etap_can:can_ok(etap, is),
     etap_can:can_ok(etap, is, 3),
+    etap_can:can_ok(etap, is_greater),
+    etap_can:can_ok(etap, is_greater, 3),
     etap_can:can_ok(etap, isnt),
     etap_can:can_ok(etap, isnt, 3),
     etap_can:can_ok(etap, any),
