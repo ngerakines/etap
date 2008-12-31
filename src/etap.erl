@@ -22,6 +22,8 @@
 %% OTHER DEALINGS IN THE SOFTWARE.
 %%
 %% ChangeLog
+%% - 2008-12-30 ngerakines
+%%   - Removing functionality, hurray!
 %% - 2008-12-28 ngerakines
 %%   - Added etap:is_greater/3
 %%   - Added etap_string module and updated test suite
@@ -219,18 +221,7 @@ test_server(State) ->
         {From, count} ->
             From ! State#test_state.count,
             State;
-        done when State#test_state.planned =/= State#test_state.count->
-            {Sm, Ss, Si} = State#test_state.start_time,
-            {Em, Es, Ei} = erlang:now(),
-            {Tm, Ts, Ti} = {Em - Sm, Es - Ss, Ei - Si},
-            io:format("# WARNING! Planned ~p but executed ~p.~n", [State#test_state.planned, State#test_state.count]),
-            io:format("Ran ~p Tests Passed: ~p Failed: ~p Skipped: ~p Time: ~B.~6..0B seconds.~n~n", [State#test_state.count, State#test_state.pass, State#test_state.fail, State#test_state.skip, Tm * 1000 + Ts, Ti]),
-            exit(normal);
         done ->
-            {Sm, Ss, Si} = State#test_state.start_time,
-            {Em, Es, Ei} = erlang:now(),
-            {Tm, Ts, Ti} = {Em - Sm, Es - Ss, Ei - Si},
-            io:format("Ran ~p Tests Passed: ~p Failed: ~p Skipped: ~p Time: ~B.~6..0B seconds.~n~n", [State#test_state.count, State#test_state.pass, State#test_state.fail, State#test_state.skip, (Tm * 1000) + Ts, Ti]),
             exit(normal)
     end,
     test_server(NewState).
