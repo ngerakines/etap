@@ -77,8 +77,7 @@
 %% @author Nick Gerakines <nick@gerakines.net> [http://socklabs.com/]
 %% @author Jeremy Wall <jeremy@marzhillstudios.com>
 %% @version 0.3.2
-%% @copyright 2008 Nick Gerakines
-%% @copyright 2007-2008 Jeremy Wall
+%% @copyright 2007-2008 Jeremy Wall, 2008 Nick Gerakines
 %% @reference http://testanything.org/wiki/index.php/Main_Page
 %% @reference http://en.wikipedia.org/wiki/Test_Anything_Protocol
 %% @todo Finish implementing the skip directive.
