@@ -36,10 +36,11 @@ There are many examples in t/*.erl.
 BUILD & INSTALL
 ===============
 
-To build this library, from the root directory execute the `make` command. You should also execute the `make test` command to verify that the library functions correctly on your system.
+To build this library, from the root directory execute the `make` command. You should also execute the `make test` command to verify that the library functions correctly on your system. If you have the Perl module TAP::Harness you can use it to collect and display test results using the `make prove` target.
 
     $ make
     $ make test
+    $ make prove
 
 If you choose to run the `make test` command then please be sure to `make clean` after to remove any of the temporary beam files created by the tests in the `t/` directory.
 
@@ -47,9 +48,9 @@ The included tests cover the basic functionality of the etap modules. They can a
 
 To install etap you need to create the `etap/bin/` directory in your current Erlang library and copy all of the .beam files created by the `make` file.
 
-    $ sudo mkdir -p /usr/lib/erlang/lib/etap-0.3/ebin
+    $ sudo mkdir -p /usr/lib/erlang/lib/etap-0.3.2/ebin
     $ make clean && make
-    $ sudo cp ebin/*.beam /usr/lib/erlang/lib/etap-0.3/ebin/
+    $ sudo cp ebin/*.beam /usr/lib/erlang/lib/etap-0.3.2/ebin/
 
 SUPPORTED FUNCTIONALITY
 =======================
@@ -58,10 +59,10 @@ There are a number of proposals listed on the TAP wiki that are not supported by
 
  * LIMITED SUPPORTED: TAP diagnostic syntax
  * LIMITED SUPPORTED: TAP meta information
- * NOT SUPPORTED: TAP logging syntax
+ * LIMITED SUPPORTED: TAP logging syntax
  * NOT SUPPORTED: Test groups
  * NOT SUPPORTED: Test blocks
- * NOT SUPPORTED: SKIP
+ * LIMITED SUPPORTED: SKIP
  * NOT SUPPORTED: TODO
  * LIMITED SUPPORTED: TAP datetime
 
