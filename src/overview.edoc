@@ -2,7 +2,7 @@
 @title A TAP testing client.
 @author Nick Gerakines <nick@gerakines.net>
 @author Jeremy Wall <jeremy@marzhillstudios.com>
-@version 0.3.1
+@version 0.3.2
 @doc A TAP testing client.
 
 == OVERVIEW ==
@@ -78,6 +78,7 @@ There are a number of proposals listed on the TAP wiki that are not supported by
 <li> NOT SUPPORTED: TODO</li>
 <li> LIMITED SUPPORTED: TAP datetime</li>
 </ul>
+
 == CREDITS ==
 
 2008 Nick Gerakines<br />

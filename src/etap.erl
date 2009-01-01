@@ -26,6 +26,7 @@
 %%   - Added etap:skip/1 and etap:skip/2
 %%   - Added skip support to etap:plan/1
 %%   - Misc code cleanup and documentation
+%%   - Bumping to 0.3.2, tagging release
 %% - 2008-12-30 ngerakines
 %%   - Removing functionality, hurray!
 %% - 2008-12-28 ngerakines
@@ -75,7 +76,8 @@
 %% 
 %% @author Nick Gerakines <nick@gerakines.net> [http://socklabs.com/]
 %% @author Jeremy Wall <jeremy@marzhillstudios.com>
-%% @version 0.3.1
+%% @version 0.3.2
+%% @copyright 2008 Nick Gerakines
 %% @copyright 2007-2008 Jeremy Wall
 %% @reference http://testanything.org/wiki/index.php/Main_Page
 %% @reference http://en.wikipedia.org/wiki/Test_Anything_Protocol
@@ -177,15 +179,15 @@ skip(TestFun, Reason) ->
     end_skip(),
     ok.
 
-%% @hidden
+%% @private
 begin_skip() ->
     begin_skip("").
 
-%% @hidden
+%% @private
 begin_skip(Reason) ->
     etap_server ! {self(), begin_skip, Reason}.
 
-%% @hidden
+%% @private
 end_skip() ->
     etap_server ! {self(), end_skip}.
 
