@@ -22,6 +22,10 @@
 %% OTHER DEALINGS IN THE SOFTWARE.
 %%
 %% ChangeLog
+%% 2009-01-01 ngerakines
+%%   - Added etap:skip/1 and etap:skip/2
+%%   - Added skip support to etap:plan/1
+%%   - Misc code cleanup and documentation
 %% - 2008-12-30 ngerakines
 %%   - Removing functionality, hurray!
 %% - 2008-12-28 ngerakines
@@ -95,25 +99,34 @@
 -export([
     ensure_test_server/0, start_etap_server/0, test_server/1,
     diag/1, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
-    any/3, none/3, fun_is/3, diag_time/0, is_greater/3
+    any/3, none/3, fun_is/3, is_greater/3, skip/1, skip/2
 ]).
 
--record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, start_time}).
+-record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, skip_reason = "", start_time}).
 
 % ---
 % External / Public functions
 
 %% @doc Create a test plan and boot strap the test server.
+plan(skip) ->
+    io:format("1..0 # skip~n");
+plan({skip, Reason}) ->
+    io:format("1..0 # skip ~s~n", [Reason]);
 plan(N) when is_integer(N), N > 0 ->
     ensure_test_server(),
     etap_server ! {self(), plan, N},
     ok.
 
 %% @doc End the current test plan and output test results.
-end_tests() -> etap_server ! done.
+end_tests() ->
+    case whereis(etap_server) of
+        undefined -> ok;
+        _ -> etap_server ! done, ok
+    end.
+    
 
 %% @doc Print a debug/status message related to the test suite.
-diag(S) -> etap_server ! {self(), log, "# " ++ S}.
+diag(S) -> etap_server ! {self(), diag, "# " ++ S}.
 
 %% @doc Assert that a statement is true.
 ok(Expr, Desc) -> mk_tap(Expr == true, Desc).
@@ -153,13 +166,28 @@ none(Got, Items, Desc) ->
 fun_is(Fun, Expected, Desc) when is_function(Fun) ->
     is(Fun(Expected), true, Desc).
 
-diag_time() ->
-    State = lib:sendw(etap_server, state),
-    {Sm, Ss, Si} = State#test_state.start_time,
-    {Em, Es, Ei} = erlang:now(),
-    {Tm, Ts, Ti} = {Em - Sm, Es - Ss, Ei - Si},
-    Message = io_lib:format("Time: ~B.~6..0B seconds.", [(Tm * 1000) + Ts, Ti]),
-    diag(Message).
+%% @equiv skip(TestFun, "")
+skip(TestFun) ->
+    skip(TestFun, "").
+
+%% @doc Skip a test.
+skip(TestFun, Reason) ->
+    begin_skip(Reason),
+    catch TestFun(),
+    end_skip(),
+    ok.
+
+%% @hidden
+begin_skip() ->
+    begin_skip("").
+
+%% @hidden
+begin_skip(Reason) ->
+    etap_server ! {self(), begin_skip, Reason}.
+
+%% @hidden
+end_skip() ->
+    etap_server ! {self(), end_skip}.
 
 % ---
 % Internal / Private functions
@@ -180,7 +208,14 @@ ensure_test_server() ->
 start_etap_server() ->
     catch register(etap_server, self()),
     proc_lib:init_ack(ok),
-    etap:test_server(#test_state{ planned = 0, count = 0, pass = 0, fail = 0, skip = 0 }).
+    etap:test_server(#test_state{
+        planned = 0,
+        count = 0,
+        pass = 0,
+        fail = 0,
+        skip = 0,
+        skip_reason = ""
+    }).
 
 
 %% @private
@@ -195,31 +230,58 @@ test_server(State) ->
             io:format("# Current time local ~s~n", [datetime(erlang:localtime())]),
             io:format("# Using etap version 0.3~n"),
             State#test_state{
-                planned = N, count = 0, pass = 0, fail = 0, skip = 0, start_time = erlang:now()
+                planned = N,
+                count = 0,
+                pass = 0,
+                fail = 0,
+                skip = 0,
+                skip_reason = "",
+                start_time = erlang:now()
             };
-        {_From, pass, N} ->
+        {_From, begin_skip, Reason} ->
             State#test_state{
-                count = State#test_state.count + N,
-                pass = State#test_state.pass + N
+                skip = 1,
+                skip_reason = Reason
             };
-        {_From, fail, N} ->
+        {_From, end_skip} ->
             State#test_state{
-                count = State#test_state.count + N,
-                fail = State#test_state.fail + N
+                skip = 0,
+                skip_reason = ""
             };
-        {_From, skip, N} ->
+        {_From, pass, Desc} ->
+            FullMessage = skip_diag(
+                " - " ++ Desc,
+                State#test_state.skip,
+                State#test_state.skip_reason
+            ),
+            io:format("ok ~p ~s~n", [State#test_state.count + 1, FullMessage]),
             State#test_state{
-                count = State#test_state.count + N,
-                skip = State#test_state.skip + N
+                count = State#test_state.count + 1,
+                pass = State#test_state.pass + 1
+            };
+            
+        {_From, fail, Desc} ->
+            FullMessage = skip_diag(
+                " - " ++ Desc,
+                State#test_state.skip,
+                State#test_state.skip_reason
+            ),
+            io:format("not ok ~p ~s~n", [State#test_state.count + 1, FullMessage]),
+            State#test_state{
+                count = State#test_state.count + 1,
+                fail = State#test_state.fail + 1
             };
         {From, state} ->
             From ! State,
             State;
-        {_From, log, Message} ->
+        {_From, diag, Message} ->
             io:format("~s~n", [Message]),
             State;
         {From, count} ->
             From ! State#test_state.count,
+            State;
+        {From, is_skip} ->
+            From ! State#test_state.skip,
             State;
         done ->
             exit(normal)
@@ -229,15 +291,16 @@ test_server(State) ->
 %% @private
 %% @doc Process the result of a test and send it to the etap_server process.
 mk_tap(Result, Desc) ->
-    N = lib:sendw(etap_server, count),
-    case Result of
-        true ->
-            etap_server ! {self(), log, lists:concat(["ok ", N + 1, " -  ",  Desc])},
-            etap_server ! {self(), pass, 1},
-            true;
-        false ->
-            etap_server ! {self(), log, lists:concat(["not ok ", N + 1,  " -  ",  Desc])},
-            etap_server ! {self(), fail, 1},
+    IsSkip = lib:sendw(etap_server, is_skip),
+    case [IsSkip, Result] of
+        [_, true] ->
+            etap_server ! {self(), pass, Desc},
+            true;                        
+        [1, _] ->                        
+            etap_server ! {self(), pass, Desc},
+            true;                        
+        _ ->                             
+            etap_server ! {self(), fail, Desc},
             false
     end.
 
@@ -246,3 +309,12 @@ mk_tap(Result, Desc) ->
 datetime(DateTime) ->
     {{Year, Month, Day}, {Hour, Min, Sec}} = DateTime,
     io_lib:format("~4.10.0B-~2.10.0B-~2.10.0B ~2.10.0B:~2.10.0B:~2.10.0B", [Year, Month, Day, Hour, Min, Sec]).
+
+%% @private
+%% @doc Craft an output message taking skip/todo into consideration.
+skip_diag(Message, 0, _) ->
+    Message;
+skip_diag(_Message, 1, "") ->
+    " # SKIP";
+skip_diag(_Message, 1, Reason) ->
+    " # SKIP : " ++ Reason.
