@@ -27,6 +27,7 @@
 %%   - Added skip support to etap:plan/1
 %%   - Misc code cleanup and documentation
 %%   - Bumping to 0.3.2, tagging release
+%%   - Adding specs and documentation
 %% - 2008-12-30 ngerakines
 %%   - Removing functionality, hurray!
 %% - 2008-12-28 ngerakines
@@ -108,6 +109,9 @@
 % ---
 % External / Public functions
 
+%% @spec plan(N) -> Result
+%%       N = skip | {skip, string()} | integer()
+%%       Result = ok
 %% @doc Create a test plan and boot strap the test server.
 plan(skip) ->
     io:format("1..0 # skip~n");
@@ -118,23 +122,38 @@ plan(N) when is_integer(N), N > 0 ->
     etap_server ! {self(), plan, N},
     ok.
 
+%% @spec end_tests() -> ok
 %% @doc End the current test plan and output test results.
 end_tests() ->
     case whereis(etap_server) of
         undefined -> ok;
         _ -> etap_server ! done, ok
     end.
-    
 
+%% @spec diag(S) -> ok
+%%       S = string()
 %% @doc Print a debug/status message related to the test suite.
-diag(S) -> etap_server ! {self(), diag, "# " ++ S}.
+diag(S) -> etap_server ! {self(), diag, "# " ++ S}, ok.
 
+%% @spec ok(Expr, Desc) -> Result
+%%       Expr = true | false
+%%       Desc = string()
+%%       Result = true | false
 %% @doc Assert that a statement is true.
 ok(Expr, Desc) -> mk_tap(Expr == true, Desc).
 
+%% @spec not_ok(Expr, Desc) -> Result
+%%       Expr = true | false
+%%       Desc = string()
+%%       Result = true | false
 %% @doc Assert that a statement is false.
 not_ok(Expr, Desc) -> mk_tap(Expr == false, Desc).
 
+%% @spec is(Got, Expected, Desc) -> Result
+%%       Got = any()
+%%       Expected = any()
+%%       Desc = string()
+%%       Result = true | false
 %% @doc Assert that two values are the same.
 is(Got, Expected, Desc) ->
     case mk_tap(Got == Expected, Desc) of
@@ -148,21 +167,46 @@ is(Got, Expected, Desc) ->
         true -> true
     end.
 
+%% @spec isnt(Got, Expected, Desc) -> Result
+%%       Got = any()
+%%       Expected = any()
+%%       Desc = string()
+%%       Result = true | false
 %% @doc Assert that two values are not the same.
 isnt(Got, Expected, Desc) -> mk_tap(Got /= Expected, Desc).
 
+%% @spec is_greater(ValueA, ValueB, Desc) -> Result
+%%       ValueA = number()
+%%       ValueB = number()
+%%       Desc = string()
+%%       Result = true | false
 %% @doc Assert that an integer is greater than another.
 is_greater(ValueA, ValueB, Desc) when is_integer(ValueA), is_integer(ValueB) ->
     mk_tap(ValueA > ValueB, Desc).
 
+%% @spec any(Got, Items, Desc) -> Result
+%%       Got = any()
+%%       Items = [any()]
+%%       Desc = string()
+%%       Result = true | false
 %% @doc Assert that an item is in a list.
 any(Got, Items, Desc) ->
     is(lists:any(Got, Items), true, Desc).
 
+%% @spec none(Got, Items, Desc) -> Result
+%%       Got = any()
+%%       Items = [any()]
+%%       Desc = string()
+%%       Result = true | false
 %% @doc Assert that an item is not in a list.
 none(Got, Items, Desc) ->
     is(lists:any(Got, Items), false, Desc).
 
+%% @spec fun_is(Fun, Expected, Desc) -> Result
+%%       Fun = function()
+%%       Expected = any()
+%%       Desc = string()
+%%       Result = true | false
 %% @doc Use an anonymous function to assert a pattern match.
 fun_is(Fun, Expected, Desc) when is_function(Fun) ->
     is(Fun(Expected), true, Desc).
@@ -171,6 +215,9 @@ fun_is(Fun, Expected, Desc) when is_function(Fun) ->
 skip(TestFun) ->
     skip(TestFun, "").
 
+%% @spec skip(TestFun, Reason) -> ok
+%%       TestFun = function()
+%%       Reason = string()
 %% @doc Skip a test.
 skip(TestFun, Reason) ->
     begin_skip(Reason),

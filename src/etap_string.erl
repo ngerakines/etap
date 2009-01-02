@@ -28,6 +28,7 @@
 
 -export([contains_ok/3, is_before/4]).
 
+%% @spec contains_ok(string(), string(), string()) -> true | false
 %% @doc Assert that a string is contained in another string.
 contains_ok(Source, String, Desc) ->
     etap:isnt(
@@ -36,6 +37,7 @@ contains_ok(Source, String, Desc) ->
         Desc
     ).
 
+%% @spec is_before(string(), string(), string(), string()) -> true | false
 %% @doc Assert that a string comes before another string within a larger body.
 is_before(Source, StringA, StringB, Desc) ->
     etap:is_greater(

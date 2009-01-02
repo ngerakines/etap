@@ -34,14 +34,17 @@
     pg2_group_exists/2, pg2_group_doesntexist/2
 ]).
 
+%% @spec load_ok(string(), string()) -> true | false
 %% @doc Assert that an application can be loaded successfully.
 load_ok(AppName, Desc) ->
     etap:ok(application:load(AppName) == ok, Desc).
 
+%% @spec start_ok(string(), string()) -> true | false
 %% @doc Assert that an application can be started successfully.
 start_ok(AppName, Desc) ->
     etap:ok(application:start(AppName) == ok, Desc).
 
+%% @spec ensure_loaded(string(), string(), string()) -> true | false
 %% @doc Assert that an application has been loaded successfully.
 ensure_loaded(AppName, AppVsn, Desc) ->
     etap:any(
@@ -50,6 +53,7 @@ ensure_loaded(AppName, AppVsn, Desc) ->
         Desc
     ).
 
+%% @spec pg2_group_exists(string(), string()) -> true | false
 %% @doc Assert that a pg2 group exists.
 pg2_group_exists(GroupName, Desc) ->
     etap:any(
@@ -58,6 +62,7 @@ pg2_group_exists(GroupName, Desc) ->
         Desc
     ).
 
+%% @spec pg2_group_doesntexist(string(), string()) -> true | false
 %% @doc Assert that a pg2 group does not exists.
 pg2_group_doesntexist(GroupName, Desc) ->
     etap:none(

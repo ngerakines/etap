@@ -34,15 +34,18 @@
 % ---
 % External / Public functions
 
+%% @spec loaded_ok(atom(), string()) -> true | false
 %% @doc Assert that a module has been loaded successfully.
 loaded_ok(M, Desc) when is_atom(M) ->
     etap:ok(test_loaded(M) orelse try_load(M), Desc). % first see if it's loaded then load it
 
+%% @spec can_ok(atom(), atom()) -> true | false
 %% @doc Assert that a module exports a given function.
 can_ok(M, F) when is_atom(M), is_atom(F) ->
     test_loaded(M) orelse try_load(M),
     etap:ok(function_exists(M, F), lists:concat([M, " can ", F])).
 
+%% @spec can_ok(atom(), atom(), integer()) -> true | false
 %% @doc Assert that a module exports a given function with a given arity.
 can_ok(M, F, A) when is_atom(M); is_atom(F), is_number(A) ->
     test_loaded(M) orelse try_load(M),
