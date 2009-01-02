@@ -50,57 +50,100 @@ This module allows developers to test their software using the TAP method.</p>
 
 <h3 class="function"><a name="any-3">any/3</a></h3>
 <div class="spec">
-<p><tt>any(Got, Items, Desc) -&gt; any()</tt></p>
+<p><tt>any(Got, Items, Desc) -&gt; Result</tt>
+<ul class="definitions"><li><tt>Got = any()</tt></li>
+<li><tt>Items = [any()]</tt></li>
+<li><tt>Desc = string()</tt></li>
+<li><tt>Result = true | false</tt></li>
+</ul></p>
 </div><p>Assert that an item is in a list.</p>
 
 <h3 class="function"><a name="diag-1">diag/1</a></h3>
 <div class="spec">
-<p><tt>diag(S) -&gt; any()</tt></p>
+<p><tt>diag(S) -&gt; ok</tt>
+<ul class="definitions"><li><tt>S = string()</tt></li>
+</ul></p>
 </div><p>Print a debug/status message related to the test suite.</p>
 
 <h3 class="function"><a name="end_tests-0">end_tests/0</a></h3>
 <div class="spec">
-<p><tt>end_tests() -&gt; any()</tt></p>
+<p><tt>end_tests() -&gt; ok</tt></p>
 </div><p>End the current test plan and output test results.</p>
 
 <h3 class="function"><a name="fun_is-3">fun_is/3</a></h3>
 <div class="spec">
-<p><tt>fun_is(Fun, Expected, Desc) -&gt; any()</tt></p>
+<p><tt>fun_is(Fun, Expected, Desc) -&gt; Result</tt>
+<ul class="definitions"><li><tt>Fun = function()</tt></li>
+<li><tt>Expected = any()</tt></li>
+<li><tt>Desc = string()</tt></li>
+<li><tt>Result = true | false</tt></li>
+</ul></p>
 </div><p>Use an anonymous function to assert a pattern match.</p>
 
 <h3 class="function"><a name="is-3">is/3</a></h3>
 <div class="spec">
-<p><tt>is(Got, Expected, Desc) -&gt; any()</tt></p>
+<p><tt>is(Got, Expected, Desc) -&gt; Result</tt>
+<ul class="definitions"><li><tt>Got = any()</tt></li>
+<li><tt>Expected = any()</tt></li>
+<li><tt>Desc = string()</tt></li>
+<li><tt>Result = true | false</tt></li>
+</ul></p>
 </div><p>Assert that two values are the same.</p>
 
 <h3 class="function"><a name="is_greater-3">is_greater/3</a></h3>
 <div class="spec">
-<p><tt>is_greater(ValueA, ValueB, Desc) -&gt; any()</tt></p>
+<p><tt>is_greater(ValueA, ValueB, Desc) -&gt; Result</tt>
+<ul class="definitions"><li><tt>ValueA = number()</tt></li>
+<li><tt>ValueB = number()</tt></li>
+<li><tt>Desc = string()</tt></li>
+<li><tt>Result = true | false</tt></li>
+</ul></p>
 </div><p>Assert that an integer is greater than another.</p>
 
 <h3 class="function"><a name="isnt-3">isnt/3</a></h3>
 <div class="spec">
-<p><tt>isnt(Got, Expected, Desc) -&gt; any()</tt></p>
+<p><tt>isnt(Got, Expected, Desc) -&gt; Result</tt>
+<ul class="definitions"><li><tt>Got = any()</tt></li>
+<li><tt>Expected = any()</tt></li>
+<li><tt>Desc = string()</tt></li>
+<li><tt>Result = true | false</tt></li>
+</ul></p>
 </div><p>Assert that two values are not the same.</p>
 
 <h3 class="function"><a name="none-3">none/3</a></h3>
 <div class="spec">
-<p><tt>none(Got, Items, Desc) -&gt; any()</tt></p>
+<p><tt>none(Got, Items, Desc) -&gt; Result</tt>
+<ul class="definitions"><li><tt>Got = any()</tt></li>
+<li><tt>Items = [any()]</tt></li>
+<li><tt>Desc = string()</tt></li>
+<li><tt>Result = true | false</tt></li>
+</ul></p>
 </div><p>Assert that an item is not in a list.</p>
 
 <h3 class="function"><a name="not_ok-2">not_ok/2</a></h3>
 <div class="spec">
-<p><tt>not_ok(Expr, Desc) -&gt; any()</tt></p>
+<p><tt>not_ok(Expr, Desc) -&gt; Result</tt>
+<ul class="definitions"><li><tt>Expr = true | false</tt></li>
+<li><tt>Desc = string()</tt></li>
+<li><tt>Result = true | false</tt></li>
+</ul></p>
 </div><p>Assert that a statement is false.</p>
 
 <h3 class="function"><a name="ok-2">ok/2</a></h3>
 <div class="spec">
-<p><tt>ok(Expr, Desc) -&gt; any()</tt></p>
+<p><tt>ok(Expr, Desc) -&gt; Result</tt>
+<ul class="definitions"><li><tt>Expr = true | false</tt></li>
+<li><tt>Desc = string()</tt></li>
+<li><tt>Result = true | false</tt></li>
+</ul></p>
 </div><p>Assert that a statement is true.</p>
 
 <h3 class="function"><a name="plan-1">plan/1</a></h3>
 <div class="spec">
-<p><tt>plan(N) -&gt; any()</tt></p>
+<p><tt>plan(N) -&gt; Result</tt>
+<ul class="definitions"><li><tt>N = skip | {skip, string()} | integer()</tt></li>
+<li><tt>Result = ok</tt></li>
+</ul></p>
 </div><p>Create a test plan and boot strap the test server.</p>
 
 <h3 class="function"><a name="skip-1">skip/1</a></h3>
@@ -111,11 +154,14 @@ This module allows developers to test their software using the TAP method.</p>
 
 <h3 class="function"><a name="skip-2">skip/2</a></h3>
 <div class="spec">
-<p><tt>skip(TestFun, Reason) -&gt; any()</tt></p>
+<p><tt>skip(TestFun, Reason) -&gt; ok</tt>
+<ul class="definitions"><li><tt>TestFun = function()</tt></li>
+<li><tt>Reason = string()</tt></li>
+</ul></p>
 </div><p>Skip a test.</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, Jan 1 2009, 09:55:29.</i></p>
+<p><i>Generated by EDoc, Jan 1 2009, 22:52:04.</i></p>
 </body>
 </html>
