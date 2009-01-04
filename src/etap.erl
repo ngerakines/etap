@@ -104,10 +104,7 @@
     any/3, none/3, fun_is/3, is_greater/3, skip/1, skip/2
 ]).
 
--record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, skip_reason = "", start_time}).
-
-% ---
-% External / Public functions
+-record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, skip_reason = ""}).
 
 %% @spec plan(N) -> Result
 %%       N = skip | {skip, string()} | integer()
@@ -283,8 +280,7 @@ test_server(State) ->
                 pass = 0,
                 fail = 0,
                 skip = 0,
-                skip_reason = "",
-                start_time = erlang:now()
+                skip_reason = ""
             };
         {_From, begin_skip, Reason} ->
             State#test_state{
