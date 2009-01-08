@@ -7,7 +7,7 @@ As per the TAP wiki:
 
 > TAP, the Test Anything Protocol, is a simple text-based interface between testing modules in a test harness. TAP started life as part of the test harness for Perl but now has implementations in C/C++, Python, PHP, Perl and probably others by the time you read this. 
 
-These modules are not meant to compete with eunit, but to offer a more general testing facility that isn't provides by eunit.
+These modules are not meant to compete with eunit, but to offer a more general testing facility that isn't provided by eunit.
 
     http://en.wikipedia.org/wiki/Test_Anything_Protocol
     http://testanything.org/wiki/index.php/Main_Page
