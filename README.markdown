@@ -54,6 +54,15 @@ To install etap you need to create the `etap/ebin/` directory in your current Er
 
 The `make dist-src` target can be used to create source distributions for further packaging and deployment.
 
+USING TAP::Harness
+==================
+
+The 'TAP::Harness' library can be used to collect TAP output produced by this module.
+
+    $ cpan install TAP::Harness
+    $ prove t/*.t
+    $ prove -v t/*.t
+
 SUPPORTED FUNCTIONALITY
 =======================
 
