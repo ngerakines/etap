@@ -31,7 +31,7 @@ At this time, etap does not support pattern matching. To work around this there 
     FunWithNumbers = fun(X) case X of [1, 2, 3 | _] -> true; _ -> false end end,
     etap:fun_is(FunWithNumbers, Numbers, "Match the first three numbers").
 
-There are many examples in t/*.erl.
+There are many examples in t/\*.erl.
 
 BUILD & INSTALL
 ===============
@@ -62,6 +62,27 @@ The 'TAP::Harness' library can be used to collect TAP output produced by this mo
     $ cpan install TAP::Harness
     $ prove t/*.t
     $ prove -v t/*.t
+
+TEST COVERAGE
+=============
+
+With etap it is possible to test the code coverage of your test suite. To enable code coverage you must set the "COVER" environmental variable and post-compile all of the .coverdata files created by the test suite.
+
+    $ COVER=1 prove t/*.t
+    $ erl
+    1> [cover:import(File) || File <- filelib:wildcard("*coverdata")].
+    [ok, ok, ...]
+    2> Cover = fun(M, Out) -> cover:analyse_to_file(M, Out, []) end.
+    ...
+    3> Mods = cover:imported_modules().
+    ...
+    4> [ Cover(Mod, atom_to_list(Mod) ++ "_coverage.txt") || Mod <- Mods].
+    ...
+
+There are several assumptions made here:
+
+ * All of the modules you are trying to get coverage for reside in the `./ebin/` directory. If this is not the case, the directory can be set using the "COVER_BIN" environmental variable.
+ * All of the .beam files analyzed by this code coverage feature are compiled with the +debug\_info flag.
 
 SUPPORTED FUNCTIONALITY
 =======================
