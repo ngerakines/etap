@@ -22,6 +22,8 @@
 %% OTHER DEALINGS IN THE SOFTWARE.
 %%
 %% ChangeLog
+%% 2009-01-12 ngerakines
+%%   - Added experimental code coverage support.
 %% 2009-01-01 ngerakines
 %%   - Added etap:skip/1 and etap:skip/2
 %%   - Added skip support to etap:plan/1
@@ -101,7 +103,8 @@
 -export([
     ensure_test_server/0, start_etap_server/0, test_server/1,
     diag/1, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
-    any/3, none/3, fun_is/3, is_greater/3, skip/1, skip/2
+    any/3, none/3, fun_is/3, is_greater/3, skip/1, skip/2,
+    ensure_coverage_starts/0, ensure_coverage_ends/0
 ]).
 
 -record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, skip_reason = ""}).
@@ -115,13 +118,37 @@ plan(skip) ->
 plan({skip, Reason}) ->
     io:format("1..0 # skip ~s~n", [Reason]);
 plan(N) when is_integer(N), N > 0 ->
+    ensure_coverage_starts(),
     ensure_test_server(),
     etap_server ! {self(), plan, N},
     ok.
 
+%% @private
+ensure_coverage_starts() ->
+    case os:getenv("COVER") of
+        false -> ok;
+        _ ->
+            BeamDir = case os:getenv("COVER_BIN") of false -> "ebin"; X -> X end,
+            cover:compile_beam_directory(BeamDir)
+    end.
+
+%% @private
+ensure_coverage_ends() ->
+    case os:getenv("COVER") of
+        false -> ok;
+        _ ->
+            Name = lists:flatten([
+                io_lib:format("~.16b", [X]) || X <- binary_to_list(erlang:md5(
+                     term_to_binary({make_ref(), now()})
+                ))
+            ]),
+            cover:export(Name ++ ".coverdata")
+    end.
+
 %% @spec end_tests() -> ok
 %% @doc End the current test plan and output test results.
 end_tests() ->
+    ensure_coverage_ends(),
     case whereis(etap_server) of
         undefined -> ok;
         _ -> etap_server ! done, ok
@@ -221,10 +248,6 @@ skip(TestFun, Reason) ->
     catch TestFun(),
     end_skip(),
     ok.
-
-%% @private
-begin_skip() ->
-    begin_skip("").
 
 %% @private
 begin_skip(Reason) ->
