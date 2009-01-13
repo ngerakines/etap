@@ -25,7 +25,7 @@ Consider the following example test plan:
     etap:isnt(2 + 2, 5, "some would argue"),
     etap:end_tests().
 
-At this time, etap does not support pattern matching. To work around this there are a number of utility tests that can be used. The etap:any/3, etap:none/3 and etap:fun_is/3 use functions to return either 'true' or 'false'.
+At this time, etap does not support pattern matching. To work around this there are a number of utility tests that can be used. The etap:any/3, etap:none/3 and etap:fun\_is/3 use functions to return either 'true' or 'false'.
 
     Numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9],
     FunWithNumbers = fun(X) case X of [1, 2, 3 | _] -> true; _ -> false end end,
@@ -81,7 +81,7 @@ With etap it is possible to test the code coverage of your test suite. To enable
 
 There are several assumptions made here:
 
- * All of the modules you are trying to get coverage for reside in the `./ebin/` directory. If this is not the case, the directory can be set using the "COVER_BIN" environmental variable.
+ * All of the modules you are trying to get coverage for reside in the `./ebin/` directory. If this is not the case, the directory can be set using the "COVER\_BIN" environmental variable.
  * All of the .beam files analyzed by this code coverage feature are compiled with the +debug\_info flag.
 
 SUPPORTED FUNCTIONALITY
