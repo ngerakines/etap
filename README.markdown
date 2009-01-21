@@ -48,9 +48,9 @@ The included tests cover the basic functionality of the etap modules. They can a
 
 To install etap you need to create the `etap/ebin/` directory in your current Erlang library and copy all of the .beam files created by the `make` file.
 
-    $ sudo mkdir -p /usr/lib/erlang/lib/etap-0.3.2/ebin
+    $ sudo mkdir -p /usr/lib/erlang/lib/etap-0.3.3/ebin
     $ make clean && make
-    $ sudo cp ebin/*.beam /usr/lib/erlang/lib/etap-0.3.2/ebin/
+    $ sudo cp ebin/*.beam /usr/lib/erlang/lib/etap-0.3.3/ebin/
 
 The `make dist-src` target can be used to create source distributions for further packaging and deployment.
 

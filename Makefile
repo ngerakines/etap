@@ -21,9 +21,9 @@ clean:
 	(cd t;$(MAKE) clean)
 
 dist-src:
-	mkdir etap-0.3.2/ && cp -rfv src support Makefile etap-0.3.2/
-	tar zcf etap-0.3.2.tgz etap-0.3.2
+	mkdir etap-0.3.3/ && cp -rfv src support Makefile etap-0.3.3/
+	tar zcf etap-0.3.3.tgz etap-0.3.3
 
 install: all
-	mkdir -p ${LIBDIR}/etap-0.3.2/{ebin,include}
-	for i in ebin/*.beam; do install $$i $(LIBDIR)/etap-0.3.2/$$i ; done
+	mkdir -p ${LIBDIR}/etap-0.3.3/{ebin,include}
+	for i in ebin/*.beam; do install $$i $(LIBDIR)/etap-0.3.3/$$i ; done

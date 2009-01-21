@@ -2,7 +2,7 @@
 @title A TAP testing client.
 @author Nick Gerakines <nick@gerakines.net>
 @author Jeremy Wall <jeremy@marzhillstudios.com>
-@version 0.3.2
+@version 0.3.3
 @doc A TAP testing client.
 
 <p>etap is a collection of Erlang modules that provide a TAP testing client library. These modules allow developers to create extensive and comprehensive tests covering many aspects of application and module development. This includes simple assertions, exceptions, the application behavior and event web requests. This library was originally written by Jeremy wall.</p>
@@ -46,9 +46,9 @@ $ make prove
 
 <p>To install etap you need to create the <code>etap/ebin/</code> directory in your current Erlang library and copy all of the .beam files created by the <code>make</code> file.</p>
 
-<pre><code>$ sudo mkdir -p /usr/lib/erlang/lib/etap-0.3.2/ebin
+<pre><code>$ sudo mkdir -p /usr/lib/erlang/lib/etap-0.3.3/ebin
 $ make clean &amp;&amp; make
-$ sudo cp ebin/*.beam /usr/lib/erlang/lib/etap-0.3.2/ebin/
+$ sudo cp ebin/*.beam /usr/lib/erlang/lib/etap-0.3.3/ebin/
 </code></pre>
 
 <p>The <code>make dist-src</code> target can be used to create source distributions for further packaging and deployment.</p>
