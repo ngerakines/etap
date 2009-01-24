@@ -107,7 +107,8 @@
     ensure_test_server/0, start_etap_server/0, test_server/1,
     diag/1, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
     any/3, none/3, fun_is/3, is_greater/3, skip/1, skip/2,
-    ensure_coverage_starts/0, ensure_coverage_ends/0
+    ensure_coverage_starts/0, ensure_coverage_ends/0, coverage_report/0,
+    datetime/1
 ]).
 
 -record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, skip_reason = ""}).
@@ -156,6 +157,16 @@ end_tests() ->
         undefined -> ok;
         _ -> etap_server ! done, ok
     end.
+
+coverage_report() ->
+    [cover:import(File) || File <- filelib:wildcard("*coverdata")],
+    lists:foreach(
+        fun(Mod) ->
+            cover:analyse_to_file(Mod, atom_to_list(Mod) ++ "_coverage.txt", [])
+        end,
+        cover:imported_modules()
+    ),
+    ok.
 
 %% @spec diag(S) -> ok
 %%       S = string()
