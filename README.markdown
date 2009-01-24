@@ -68,16 +68,15 @@ TEST COVERAGE
 
 With etap it is possible to test the code coverage of your test suite. To enable code coverage you must set the "COVER" environmental variable and post-compile all of the .coverdata files created by the test suite.
 
+    $ COVER=1 erl -eval 'module:test().' -s init stop ...
+    OR
+    $ COVER=1 escript t/*.t
+    OR
     $ COVER=1 prove t/*.t
     $ erl
-    1> [cover:import(File) || File <- filelib:wildcard("*coverdata")].
-    [ok, ok, ...]
-    2> Cover = fun(M, Out) -> cover:analyse_to_file(M, Out, []) end.
+    1> etap_report:create().
     ...
-    3> Mods = cover:imported_modules().
-    ...
-    4> [ Cover(Mod, atom_to_list(Mod) ++ "_coverage.txt") || Mod <- Mods].
-    ...
+    ok
 
 There are several assumptions made here:
 
@@ -96,7 +95,9 @@ There are a number of proposals listed on the TAP wiki that are not supported by
  * NOT SUPPORTED: Test blocks
  * LIMITED SUPPORTED: SKIP
  * NOT SUPPORTED: TODO
- * LIMITED SUPPORTED: TAP datetime
+ * SUPPORTED: TAP datetime
+ * SUPPORTED: c0 code coverage
+ * SUPPORTED: html code coverage reports
 
 CREDITS
 =======

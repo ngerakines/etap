@@ -72,7 +72,9 @@ find_source(Module) when is_atom(Module) ->
     find_source([
         filelib:is_file(Root ++ ".src"),
         filename:join([Dir, "..", "src", Root ++ ".erl"]),
-        filename:join([Dir, "src", Root ++ ".erl"])
+        filename:join([Dir, "src", Root ++ ".erl"]),
+        filename:join([Dir, "elibs", Root ++ ".erl"]),
+        filename:join([Dir, "..", "elibs", Root ++ ".erl"])
     ]);
 find_source([]) -> none;
 find_source([Test | Tests]) ->
