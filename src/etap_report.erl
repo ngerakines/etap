@@ -1,8 +1,12 @@
+%% @doc A module for creating nice looking code coverage reports.
 -module(etap_report).
 -export([create/0]).
 
+%% @spec create() -> ok
+%% @doc Create html code coverage reports for each module that code coverage
+%% data exists for.
 create() ->
-    [cover:import(File) || File <- filelib:wildcard("*coverdata")],
+    [cover:import(File) || File <- filelib:wildcard("*.coverdata")],
     lists:foreach(
         fun(Module) ->
             file_report(Module)
@@ -10,6 +14,7 @@ create() ->
         cover:imported_modules()
     ).
 
+%% @private
 file_report(Module) ->
     {ok, Data} = cover:analyse(Module, calls, line),
     Source = find_source(Module),
@@ -27,12 +32,14 @@ file_report(Module) ->
             ok
     end.
 
+%% @private
 collect_coverage([], Acc) -> Acc;
 collect_coverage([{{_, _}, 0} | Data], {Good, Bad}) ->
     collect_coverage(Data, {Good, Bad + 1});
 collect_coverage([_ | Data], {Good, Bad}) ->
     collect_coverage(Data, {Good + 1, Bad}).
 
+%% @private
 output_lines(Data, WriteFD, SourceFD, LineNumber) ->
     {Match, NextData} = datas_match(Data, LineNumber),
     case io:get_line(SourceFD, '') of
@@ -51,6 +58,7 @@ output_lines(Data, WriteFD, SourceFD, LineNumber) ->
     	    end
     end.
 
+%% @private
 out_line(Number, none, Line) ->
     PadNu = string:right(integer_to_list(Number), 5, $.),
     io_lib:format("<span class=\"inferred0\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]);
@@ -61,11 +69,12 @@ out_line(Number, _, Line) ->
     PadNu = string:right(integer_to_list(Number), 5, $.),
     io_lib:format("<span class=\"marked0\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]).
 
+%% @private
 datas_match([], _) -> {false, []};
 datas_match([{{_, Line}, CC} | Datas], LineNumber) when Line == LineNumber -> {{true, CC}, Datas};
 datas_match(Data, _) -> {false, Data}.
 
-
+%% @private
 find_source(Module) when is_atom(Module) ->
     Root = filename:rootname(Module),
     Dir = filename:dirname(Root),
@@ -83,6 +92,7 @@ find_source([Test | Tests]) ->
         false -> find_source(Tests)
     end.
 
+%% @private
 header(Module, Good, Bad) ->
     CovPer = round((Good / (Good + Bad)) * 100),
     io:format("Good ~p~n", [Good]),
@@ -231,6 +241,7 @@ header(Module, Good, Bad) ->
           </tbody>
         </table><pre>", [Module, etap:datetime({date(), time()}), atom_to_list(Module) ++ "_report.html", Module, round(CovPer), Good, Bad]).
 
+%% @private
 footer() ->
     "</pre><hr /><p>Generated using <a href='http://github.com/ngerakines/etap'>etap 0.3.3</a>.</p>
           </body>

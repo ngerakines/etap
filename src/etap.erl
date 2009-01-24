@@ -22,9 +22,12 @@
 %% OTHER DEALINGS IN THE SOFTWARE.
 %%
 %% ChangeLog
+%% 2009-01-23 ngerakines
+%%   - Added etap_report module to build pretty HTML code coverage reports
+%%   - Updated readme and misc documentation
 %% 2009-01-21 ngerakines
 %%   - Bumpting to 0.3.3
-%%   - Updated documentation for the coverage report script.=
+%%   - Updated documentation for the coverage report script.
 %% 2009-01-12 ngerakines
 %%   - Added experimental code coverage support.
 %% 2009-01-01 ngerakines
@@ -158,8 +161,11 @@ end_tests() ->
         _ -> etap_server ! done, ok
     end.
 
+%% @spec coverage_report() -> ok
+%% @doc Use the cover module's covreage report builder to create code coverage
+%% reports from recently created coverdata files.
 coverage_report() ->
-    [cover:import(File) || File <- filelib:wildcard("*coverdata")],
+    [cover:import(File) || File <- filelib:wildcard("*.coverdata")],
     lists:foreach(
         fun(Mod) ->
             cover:analyse_to_file(Mod, atom_to_list(Mod) ++ "_coverage.txt", [])

@@ -99,6 +99,28 @@ There are a number of proposals listed on the TAP wiki that are not supported by
  * SUPPORTED: c0 code coverage
  * SUPPORTED: html code coverage reports
 
+We Need Your Help!
+==================
+
+Things that can greatly be improved. Please fork this project and contribute. Patches are always welcome.
+
+ * Support for testing multi-node systems and environments.
+ * OTP behaviors like gen\_server, gen\_fsm and gen\_event
+ * Web requests
+ * Things like the error\_logger and sasl
+ * Code coverage report look and feel
+ * C1 code coverage reporting and html output
+ * Documentation
+
+I've got a project. How can I integrate testing?
+=============================================
+
+If you havn't been a test-first developer before, now is the best time to start. To integrate etap into your project, you need to do 3 things.
+
+ 1. Install etap onto your development/build/integration system.
+ 2. Create tests! Start with really simple things like loading modules and gradually build tests into more and more complex and deep functionality.
+ 3. Run your tests. This is the most important step. Get into the habit of running your test suite before every check-in, after every pull, before packaging, etc.
+
 CREDITS
 =======
 
