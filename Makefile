@@ -19,6 +19,7 @@ prove: all
 clean:
 	(cd src;$(MAKE) clean)
 	(cd t;$(MAKE) clean)
+	rm -rf cover/
 
 dist-src:
 	mkdir etap-0.3.3/ && cp -rfv src support Makefile etap-0.3.3/

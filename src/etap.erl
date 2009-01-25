@@ -144,12 +144,14 @@ ensure_coverage_ends() ->
     case os:getenv("COVER") of
         false -> ok;
         _ ->
+            filelib:ensure_dir("cover/"),
             Name = lists:flatten([
                 io_lib:format("~.16b", [X]) || X <- binary_to_list(erlang:md5(
                      term_to_binary({make_ref(), now()})
                 ))
             ]),
-            cover:export(Name ++ ".coverdata")
+            X = cover:export("cover/" ++ Name ++ ".coverdata"),
+            io:format("X ~p~n", [X])
     end.
 
 %% @spec end_tests() -> ok
@@ -165,7 +167,7 @@ end_tests() ->
 %% @doc Use the cover module's covreage report builder to create code coverage
 %% reports from recently created coverdata files.
 coverage_report() ->
-    [cover:import(File) || File <- filelib:wildcard("*.coverdata")],
+    [cover:import(File) || File <- filelib:wildcard("cover/*.coverdata")],
     lists:foreach(
         fun(Mod) ->
             cover:analyse_to_file(Mod, atom_to_list(Mod) ++ "_coverage.txt", [])
@@ -202,11 +204,11 @@ not_ok(Expr, Desc) -> mk_tap(Expr == false, Desc).
 is(Got, Expected, Desc) ->
     case mk_tap(Got == Expected, Desc) of
         false ->
-            etap_server ! {self(), log, "    ---"},
-            etap_server ! {self(), log, io_lib:format("    description: ~p", [Desc])},
-            etap_server ! {self(), log, io_lib:format("    found:       ~p", [Got])},
-            etap_server ! {self(), log, io_lib:format("    wanted:      ~p", [Expected])},
-            etap_server ! {self(), log, "    ..."},
+            etap_server ! {self(), diag, "    ---"},
+            etap_server ! {self(), diag, io_lib:format("    description: ~p", [Desc])},
+            etap_server ! {self(), diag, io_lib:format("    found:       ~p", [Got])},
+            etap_server ! {self(), diag, io_lib:format("    wanted:      ~p", [Expected])},
+            etap_server ! {self(), diag, "    ..."},
             false;
         true -> true
     end.
@@ -314,9 +316,9 @@ start_etap_server() ->
 test_server(State) ->
     NewState = receive
         {_From, plan, N} ->
-            io:format("1..~p~n", [N]),
             io:format("# Current time local ~s~n", [datetime(erlang:localtime())]),
             io:format("# Using etap version 0.3~n"),
+            io:format("1..~p~n", [N]),
             State#test_state{
                 planned = N,
                 count = 0,

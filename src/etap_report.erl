@@ -6,7 +6,7 @@
 %% @doc Create html code coverage reports for each module that code coverage
 %% data exists for.
 create() ->
-    [cover:import(File) || File <- filelib:wildcard("*.coverdata")],
+    [cover:import(File) || File <- filelib:wildcard("cover/*.coverdata")],
     lists:foreach(
         fun(Module) ->
             file_report(Module)
