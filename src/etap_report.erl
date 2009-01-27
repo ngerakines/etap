@@ -12,7 +12,20 @@ create() ->
             file_report(Module)
         end,
         cover:imported_modules()
-    ).
+    ),
+    index(cover:imported_modules()).
+
+index(Modules) ->
+    {ok, IndexFD} = file:open("cover/index.html", [write]),
+    io:format(IndexFD, "<html><body><ul>", []),
+    lists:foreach(
+        fun(Module) ->
+            io:format(IndexFD, "<li><a href=\"~s\">~s</a></li>", [atom_to_list(Module) ++ "_report.html", atom_to_list(Module)])
+        end,
+        Modules
+    ),
+    io:format(IndexFD, "</ul></body></html>", []),
+    ok.
 
 %% @private
 file_report(Module) ->
@@ -22,7 +35,7 @@ file_report(Module) ->
         none -> ok;
         Source ->
             {ok, SourceFD} = file:open(Source, [read]),
-            {ok, WriteFD} = file:open(atom_to_list(Module) ++ "_report.html", [write]),
+            {ok, WriteFD} = file:open("cover/" ++ atom_to_list(Module) ++ "_report.html", [write]),
             {Good, Bad} = collect_coverage(Data, {0, 0}),
             io:format(WriteFD, "~s", [header(Module, Good, Bad)]),
             output_lines(Data, WriteFD, SourceFD, 1),

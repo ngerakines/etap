@@ -115,7 +115,7 @@ Things that can greatly be improved. Please fork this project and contribute. Pa
 I've got a project. How can I integrate testing?
 =============================================
 
-If you havn't been a test-first developer before, now is the best time to start. To integrate etap into your project, you need to do 3 things.
+If you haven't been a test-first developer before, now is the best time to start. To integrate etap into your project, you need to do 3 things.
 
  1. Install etap onto your development/build/integration system.
  2. Create tests! Start with really simple things like loading modules and gradually build tests into more and more complex and deep functionality.
