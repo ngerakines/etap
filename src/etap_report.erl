@@ -32,6 +32,7 @@ index(Modules) ->
                 0 -> LastRow;
                 _ ->
                     CovPer = round((Good / (Good + Bad)) * 100),
+                    UnCovPer = round((Bad / (Good + Bad)) * 100),
                     RowClass = case LastRow of 1 -> "odd"; _ -> "even" end,
                     io:format(IndexFD, "<div class=\"~s\">", [RowClass]),
                     io:format(IndexFD, "<a href=\"~s\">~s</a>", [atom_to_list(Module) ++ "_report.html", atom_to_list(Module)]),
@@ -45,7 +46,7 @@ index(Modules) ->
                         </td>
                       </tr>
                     </table>
-                    ", [round(CovPer), Good, Bad]),
+                    ", [CovPer, CovPer, UnCovPer]),
                     io:format(IndexFD, "</div>", []),
                     case LastRow of
                         1 -> 0;
@@ -67,6 +68,7 @@ index(Modules) ->
         0 -> ok;
         _ ->
             TotalCovPer = round((TotalGood / (TotalGood + TotalBad)) * 100),
+            TotalUnCovPer = round((TotalBad / (TotalGood + TotalBad)) * 100),
             io:format(IndexFD, "<div>", []),
             io:format(IndexFD, "Total 
             <table cellspacing='0' cellpadding='0' align='right'>
@@ -78,7 +80,7 @@ index(Modules) ->
                 </td>
               </tr>
             </table>
-            ", [round(TotalCovPer), round(TotalCovPer), TotalBad]),
+            ", [TotalCovPer, TotalCovPer, TotalUnCovPer]),
             io:format(IndexFD, "</div>", [])
     end,
     io:format(IndexFD, "</body></html>", []),
@@ -170,6 +172,7 @@ header(Module, Good, Bad) ->
     io:format("Good ~p~n", [Good]),
     io:format("Bad ~p~n", [Bad]),
     CovPer = round((Good / (Good + Bad)) * 100),
+    UnCovPer = round((Bad / (Good + Bad)) * 100),
     io:format("CovPer ~p~n", [CovPer]),
     io_lib:format("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
         <html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
@@ -312,7 +315,7 @@ header(Module, Good, Bad) ->
               </td>
             </tr>
           </tbody>
-        </table><pre>", [Module, etap:datetime({date(), time()}), atom_to_list(Module) ++ "_report.html", Module, round(CovPer), round(CovPer), Bad]).
+        </table><pre>", [Module, etap:datetime({date(), time()}), atom_to_list(Module) ++ "_report.html", Module, CovPer, CovPer, UnCovPer]).
 
 %% @private
 footer() ->
