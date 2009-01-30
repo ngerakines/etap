@@ -7,43 +7,103 @@
 %% data exists for.
 create() ->
     [cover:import(File) || File <- filelib:wildcard("cover/*.coverdata")],
-    lists:foreach(
-        fun(Module) ->
-            file_report(Module)
+    Modules = lists:foldl(
+        fun(Module, Acc) ->
+            [{Module, file_report(Module)} | Acc]
         end,
+        [],
         cover:imported_modules()
     ),
-    index(cover:imported_modules()).
+    index(Modules).
 
 index(Modules) ->
     {ok, IndexFD} = file:open("cover/index.html", [write]),
-    io:format(IndexFD, "<html><body><ul>", []),
-    lists:foreach(
-        fun(Module) ->
-            io:format(IndexFD, "<li><a href=\"~s\">~s</a></li>", [atom_to_list(Module) ++ "_report.html", atom_to_list(Module)])
+    io:format(IndexFD, "<html><head><style>
+    table.percent_graph { height: 12px; border: #808080 1px solid; empty-cells: show; }
+    table.percent_graph td.covered { height: 10px; background: #00f000; }
+    table.percent_graph td.uncovered { height: 10px; background: #e00000; }
+    .odd { background-color: #ddd; }
+    .even { background-color: #fff; }
+    </style></head>", []),
+    io:format(IndexFD, "<body>", []),
+    lists:foldl(
+        fun({Module, {Good, Bad, _}}, LastRow) ->
+            case Good + Bad of
+                0 -> LastRow;
+                _ ->
+                    CovPer = round((Good / (Good + Bad)) * 100),
+                    RowClass = case LastRow of 1 -> "odd"; _ -> "even" end,
+                    io:format(IndexFD, "<div class=\"~s\">", [RowClass]),
+                    io:format(IndexFD, "<a href=\"~s\">~s</a>", [atom_to_list(Module) ++ "_report.html", atom_to_list(Module)]),
+                    io:format(IndexFD, "
+                    <table cellspacing='0' cellpadding='0' align='right'>
+                      <tr>
+                        <td><tt>~p%</tt>&nbsp;</td><td>
+                          <table cellspacing='0' class='percent_graph' cellpadding='0' width='100'>
+                          <tr><td class='covered' width='~p' /><td class='uncovered' width='~p' /></tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                    ", [round(CovPer), Good, Bad]),
+                    io:format(IndexFD, "</div>", []),
+                    case LastRow of
+                        1 -> 0;
+                        0 -> 1
+                    end
+            end
         end,
+        0,
         Modules
     ),
-    io:format(IndexFD, "</ul></body></html>", []),
+    {TotalGood, TotalBad} = lists:foldl(
+        fun({_, {Good, Bad, _}}, {TGood, TBad}) ->
+            {TGood + Good, TBad + Bad}
+        end,
+        {0, 0},
+        Modules
+    ),
+    case TotalGood + TotalBad of
+        0 -> ok;
+        _ ->
+            TotalCovPer = round((TotalGood / (TotalGood + TotalBad)) * 100),
+            io:format(IndexFD, "<div>", []),
+            io:format(IndexFD, "Total 
+            <table cellspacing='0' cellpadding='0' align='right'>
+              <tr>
+                <td><tt>~p%</tt>&nbsp;</td><td>
+                  <table cellspacing='0' class='percent_graph' cellpadding='0' width='100'>
+                  <tr><td class='covered' width='~p' /><td class='uncovered' width='~p' /></tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+            ", [round(TotalCovPer), TotalGood, TotalBad]),
+            io:format(IndexFD, "</div>", [])
+    end,
+    io:format(IndexFD, "</body></html>", []),
+    file:close(IndexFD),
     ok.
 
 %% @private
 file_report(Module) ->
     {ok, Data} = cover:analyse(Module, calls, line),
     Source = find_source(Module),
-    case find_source(Module) of
-        none -> ok;
-        Source ->
+    {Good, Bad} = collect_coverage(Data, {0, 0}),
+    case {Source, Good + Bad} of
+        {none, _} -> ok;
+        {_, 0} -> ok;
+        _ ->
             {ok, SourceFD} = file:open(Source, [read]),
             {ok, WriteFD} = file:open("cover/" ++ atom_to_list(Module) ++ "_report.html", [write]),
-            {Good, Bad} = collect_coverage(Data, {0, 0}),
             io:format(WriteFD, "~s", [header(Module, Good, Bad)]),
             output_lines(Data, WriteFD, SourceFD, 1),
             io:format(WriteFD, "~s", [footer()]),
             file:close(WriteFD),
             file:close(SourceFD),
             ok
-    end.
+    end,
+    {Good, Bad, Source}.
 
 %% @private
 collect_coverage([], Acc) -> Acc;
@@ -107,9 +167,9 @@ find_source([Test | Tests]) ->
 
 %% @private
 header(Module, Good, Bad) ->
-    CovPer = round((Good / (Good + Bad)) * 100),
     io:format("Good ~p~n", [Good]),
     io:format("Bad ~p~n", [Bad]),
+    CovPer = round((Good / (Good + Bad)) * 100),
     io:format("CovPer ~p~n", [CovPer]),
     io_lib:format("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
         <html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
