@@ -27,9 +27,10 @@ index(Modules) ->
     </style></head>", []),
     io:format(IndexFD, "<body>", []),
     lists:foldl(
-        fun({Module, {Good, Bad, _}}, LastRow) ->
-            case Good + Bad of
-                0 -> LastRow;
+        fun({Module, {Good, Bad, Source}}, LastRow) ->
+            case {Good + Bad, Source} of
+                {0, _} -> LastRow;
+                {_, none} -> LastRow;
                 _ ->
                     CovPer = round((Good / (Good + Bad)) * 100),
                     UnCovPer = round((Bad / (Good + Bad)) * 100),
@@ -58,8 +59,8 @@ index(Modules) ->
         Modules
     ),
     {TotalGood, TotalBad} = lists:foldl(
-        fun({_, {Good, Bad, _}}, {TGood, TBad}) ->
-            {TGood + Good, TBad + Bad}
+        fun({_, {Good, Bad, Source}}, {TGood, TBad}) ->
+            case Source of none -> {TGood, TBad}; _ -> {TGood + Good, TBad + Bad} end
         end,
         {0, 0},
         Modules
