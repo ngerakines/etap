@@ -78,7 +78,7 @@ index(Modules) ->
                 </td>
               </tr>
             </table>
-            ", [round(TotalCovPer), TotalGood, TotalBad]),
+            ", [round(TotalCovPer), round(TotalCovPer), TotalBad]),
             io:format(IndexFD, "</div>", [])
     end,
     io:format(IndexFD, "</body></html>", []),
@@ -312,7 +312,7 @@ header(Module, Good, Bad) ->
               </td>
             </tr>
           </tbody>
-        </table><pre>", [Module, etap:datetime({date(), time()}), atom_to_list(Module) ++ "_report.html", Module, round(CovPer), Good, Bad]).
+        </table><pre>", [Module, etap:datetime({date(), time()}), atom_to_list(Module) ++ "_report.html", Module, round(CovPer), round(CovPer), Bad]).
 
 %% @private
 footer() ->
