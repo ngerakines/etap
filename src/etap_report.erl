@@ -19,7 +19,7 @@ create() ->
 index(Modules) ->
     {ok, IndexFD} = file:open("cover/index.html", [write]),
     io:format(IndexFD, "<html><head><style>
-    table.percent_graph { height: 12px; border: #808080 1px solid; empty-cells: show; }
+    table.percent_graph { height: 12px; border:1px solid #E2E6EF; empty-cells: show; }
     table.percent_graph td.covered { height: 10px; background: #00f000; }
     table.percent_graph td.uncovered { height: 10px; background: #e00000; }
     .odd { background-color: #ddd; }
@@ -120,7 +120,10 @@ output_lines(Data, WriteFD, SourceFD, LineNumber) ->
     {Match, NextData} = datas_match(Data, LineNumber),
     case io:get_line(SourceFD, '') of
         eof -> ok;
-        Line = "%" ++ _ ->
+        Line = "%% @todo" ++ _ ->
+            io:format(WriteFD, "~s", [out_line(LineNumber, highlight, Line)]),
+            output_lines(NextData, WriteFD, SourceFD, LineNumber + 1);
+        Line = "% " ++ _ ->
             io:format(WriteFD, "~s", [out_line(LineNumber, none, Line)]),
             output_lines(NextData, WriteFD, SourceFD, LineNumber + 1);
     	Line ->
@@ -137,13 +140,16 @@ output_lines(Data, WriteFD, SourceFD, LineNumber) ->
 %% @private
 out_line(Number, none, Line) ->
     PadNu = string:right(integer_to_list(Number), 5, $.),
-    io_lib:format("<span class=\"inferred0\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]);
+    io_lib:format("<span class=\"marked\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]);
+out_line(Number, highlight, Line) ->
+    PadNu = string:right(integer_to_list(Number), 5, $.),
+    io_lib:format("<span class=\"highlight\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]);
 out_line(Number, 0, Line) ->
     PadNu = string:right(integer_to_list(Number), 5, $.),
-    io_lib:format("<span class=\"uncovered0\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]);
+    io_lib:format("<span class=\"uncovered\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]);
 out_line(Number, _, Line) ->
     PadNu = string:right(integer_to_list(Number), 5, $.),
-    io_lib:format("<span class=\"marked0\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]).
+    io_lib:format("<span class=\"covered\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]).
 
 %% @private
 datas_match([], _) -> {false, []};
@@ -184,31 +190,15 @@ header(Module, Good, Bad) ->
      background-color: rgb(185, 210, 200);
      display: block;
     }
-    span.marked1 {
-     background-color: rgb(190, 215, 205);
-     display: block;
-    }
-    span.inferred0 {
-     background-color: rgb(175, 200, 200);
-     display: block;
-    }
-    span.inferred1 {
-     background-color: rgb(180, 205, 205);
-     display: block;
-    }
-    span.uncovered0 {
-     background-color: rgb(225, 110, 110);
-     display: block;
-    }
-    span.uncovered1 {
-     background-color: rgb(235, 120, 120);
-     display: block;
-    }
+    span.marked { display: block; background-color: #ffffff; }
+    span.highlight { display: block; background-color: #fff9d7; }
+    span.covered { display: block; background-color: #f7f7f7 ; }
+    span.uncovered { display: block; background-color: #ffebe8 ; }
     span.overview {
-     border-bottom: 8px solid black;
+     border-bottom: 1px solid #E2E6EF; 
     }
     div.overview {
-     border-bottom: 8px solid black;
+     border-bottom: 1px solid #E2E6EF; 
     }
     body {
      font-family: verdana, arial, helvetica;
@@ -231,7 +221,7 @@ header(Module, Good, Bad) ->
     }
     table.percent_graph {
      height: 12px;
-     border: #808080 1px solid;
+     border: 1px solid #E2E6EF; 
      empty-cells: show;
     }
     table.percent_graph td.covered {
@@ -252,7 +242,7 @@ header(Module, Good, Bad) ->
     }
     table.report td.heading {
      background: #dcecff;
-     border: #d0d0d0 1px solid;
+     border: 1px solid #E2E6EF; 
      font-weight: bold;
      text-align: center;
     }
@@ -260,11 +250,11 @@ header(Module, Good, Bad) ->
      background: #c0ffc0;
     }
     table.report td.text {
-     border: #d0d0d0 1px solid;
+     border: 1px solid #E2E6EF; 
     }
     table.report td.value {
      text-align: right;
-     border: #d0d0d0 1px solid;
+     border: 1px solid #E2E6EF; 
     }
     table.report tr.light {
      background-color: rgb(240, 240, 245);
