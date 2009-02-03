@@ -65,7 +65,7 @@ index(Modules) ->
         {0, 0},
         Modules
     ),
-    io:format("<p>Generated on ~s.</p>~n", [etap:datetime({date(), time()})]),
+    io:format(IndexFD, "<p>Generated on ~s.</p>~n", [etap:datetime({date(), time()})]),
     case TotalGood + TotalBad of
         0 -> ok;
         _ ->
