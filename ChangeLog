@@ -1,0 +1,83 @@
+
+2009-02-10 ngerakines
+  - Added etap:skip/3
+  - Adding misc documentation
+  - Splitting changes list out of etap.erl and into this file.
+
+2009-01-23 ngerakines
+  - Added etap_report module to build pretty HTML code coverage reports
+  - Updated readme and misc documentation
+
+2009-01-21 ngerakines
+  - Bumpting to 0.3.3
+  - Updated documentation for the coverage report script.
+
+2009-01-12 ngerakines
+  - Added experimental code coverage support.
+
+2009-01-01 ngerakines
+  - Added etap:skip/1 and etap:skip/2
+  - Added skip support to etap:plan/1
+  - Misc code cleanup and documentation
+  - Bumping to 0.3.2, tagging release
+  - Adding specs and documentation
+
+2008-12-30 ngerakines
+  - Removing functionality, hurray!
+
+2008-12-28 ngerakines
+  - Added etap:is_greater/3
+  - Added etap_string module and updated test suite
+
+2008-12-26 ngerakines
+  - Cleaned etap_web:build_request/4 module handling of redirects
+  - Added functionality to etal_request
+
+2008-12-17 Jacob Vorreuter, ngerakines, Jeremy Wall
+  - Cleaned etap_web:build_request/4 module handling for get/post/put requests
+  - Documentation updates / cleanup
+
+2008-12-17 Jacob Vorreuter, ngerakines, Jeremy Wall
+  - Fixing bug in etap_request:status_is/2
+  - Added attribute inspection tests to etap_can
+  - Added Jacob to credits list
+
+2008-12-15 Jeremy Wall, ngerakines
+  - Added doc targets to build
+  - Misc build cleanup
+
+2008-12-11 ngerakines
+  - Added etap:diag_time/0
+
+2008-12-10 ngerakines
+  - Adding support for non-get requests in etap_web.
+
+2008-12-09 ngerakines
+  - Added output displaying test run time in seconds.
+
+2008-12-01 ngerakines
+  - Fixed bug in test etap_t_002.
+  - Minor/Misc code cleanup.
+
+2008-11-30 ngerakines
+  - Fixed by in test results where failed tests weren't being recorded.
+  - Added warning when planned vs executed tests aren't the same.
+  - Bumping rev to 0.3.1.
+  - Added etap:fun_is/3.
+  - Updated the README
+  - Added limited support for the dianostic syntax
+
+2008-11-28 ngerakines
+  - Minor documentation and build changes.
+  - Added etap_process module and updated test suite accordingly.
+
+2008-11-27 ngerakines
+  - Added etap:any/3, etap:none/3 and etap_excecption:throws_ok/3.
+  - Internal cleanup of etap modules.
+
+2008-11-25 ngerakines
+  - Consolidated test server and plan server.
+  - Added meta information when creating new plan.
+  - Added lots of documentation.
+  - Cleaned up the current test suite.
+  - Started extending testing capabilities of etap_request.

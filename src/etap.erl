@@ -1,4 +1,4 @@
-%% Copyright (c) 2008 Nick Gerakines <nick@gerakines.net>
+%% Copyright (c) 2008-2009 Nick Gerakines <nick@gerakines.net>
 %% 
 %% Permission is hereby granted, free of charge, to any person
 %% obtaining a copy of this software and associated documentation
@@ -20,73 +20,11 @@
 %% WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 %% FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 %% OTHER DEALINGS IN THE SOFTWARE.
-%%
-%% ChangeLog
-%% 2009-01-23 ngerakines
-%%   - Added etap_report module to build pretty HTML code coverage reports
-%%   - Updated readme and misc documentation
-%% 2009-01-21 ngerakines
-%%   - Bumpting to 0.3.3
-%%   - Updated documentation for the coverage report script.
-%% 2009-01-12 ngerakines
-%%   - Added experimental code coverage support.
-%% 2009-01-01 ngerakines
-%%   - Added etap:skip/1 and etap:skip/2
-%%   - Added skip support to etap:plan/1
-%%   - Misc code cleanup and documentation
-%%   - Bumping to 0.3.2, tagging release
-%%   - Adding specs and documentation
-%% - 2008-12-30 ngerakines
-%%   - Removing functionality, hurray!
-%% - 2008-12-28 ngerakines
-%%   - Added etap:is_greater/3
-%%   - Added etap_string module and updated test suite
-%% - 2008-12-26 ngerakines
-%%   - Cleaned etap_web:build_request/4 module handling of redirects
-%%   - Added functionality to etal_request
-%% - 2008-12-17 Jacob Vorreuter, ngerakines, Jeremy Wall
-%%   - Cleaned etap_web:build_request/4 module handling for get/post/put requests
-%%   - Documentation updates / cleanup
-%% - 2008-12-17 Jacob Vorreuter, ngerakines, Jeremy Wall
-%%   - Fixing bug in etap_request:status_is/2
-%%   - Added attribute inspection tests to etap_can
-%%   - Added Jacob to credits list
-%% - 2008-12-15 Jeremy Wall, ngerakines
-%%   - Added doc targets to build
-%%   - Misc build cleanup
-%% - 2008-12-11 ngerakines
-%%   - Added etap:diag_time/0
-%% - 2008-12-10 ngerakines
-%%   - Adding support for non-get requests in etap_web.
-%% - 2008-12-09 ngerakines
-%%   - Added output displaying test run time in seconds.
-%% - 2008-12-01 ngerakines
-%%   - Fixed bug in test etap_t_002.
-%%   - Minor/Misc code cleanup.
-%% - 2008-11-30 ngerakines
-%%   - Fixed by in test results where failed tests weren't being recorded.
-%%   - Added warning when planned vs executed tests aren't the same.
-%%   - Bumping rev to 0.3.1.
-%%   - Added etap:fun_is/3.
-%%   - Updated the README
-%%   - Added limited support for the dianostic syntax
-%% - 2008-11-28 ngerakines
-%%   - Minor documentation and build changes.
-%%   - Added etap_process module and updated test suite accordingly.
-%% - 2008-11-27 ngerakines
-%%   - Added etap:any/3, etap:none/3 and etap_excecption:throws_ok/3.
-%%   - Internal cleanup of etap modules.
-%% - 2008-11-25 ngerakines
-%%   - Consolidated test server and plan server.
-%%   - Added meta information when creating new plan.
-%%   - Added lots of documentation.
-%%   - Cleaned up the current test suite.
-%%   - Started extending testing capabilities of etap_request.
 %% 
 %% @author Nick Gerakines <nick@gerakines.net> [http://socklabs.com/]
 %% @author Jeremy Wall <jeremy@marzhillstudios.com>
 %% @version 0.3.3
-%% @copyright 2007-2008 Jeremy Wall, 2008 Nick Gerakines
+%% @copyright 2007-2008 Jeremy Wall, 2008-2009 Nick Gerakines
 %% @reference http://testanything.org/wiki/index.php/Main_Page
 %% @reference http://en.wikipedia.org/wiki/Test_Anything_Protocol
 %% @todo Finish implementing the skip directive.
@@ -111,10 +49,10 @@
     diag/1, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
     any/3, none/3, fun_is/3, is_greater/3, skip/1, skip/2,
     ensure_coverage_starts/0, ensure_coverage_ends/0, coverage_report/0,
-    datetime/1
+    datetime/1, skip/3
 ]).
-
 -record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, skip_reason = ""}).
+-vsn("0.3.3").
 
 %% @spec plan(N) -> Result
 %%       N = skip | {skip, string()} | integer()
@@ -130,6 +68,15 @@ plan(N) when is_integer(N), N > 0 ->
     etap_server ! {self(), plan, N},
     ok.
 
+%% @spec end_tests() -> ok
+%% @doc End the current test plan and output test results.
+end_tests() ->
+    ensure_coverage_ends(),
+    case whereis(etap_server) of
+        undefined -> ok;
+        _ -> etap_server ! done, ok
+    end.
+
 %% @private
 ensure_coverage_starts() ->
     case os:getenv("COVER") of
@@ -140,6 +87,8 @@ ensure_coverage_starts() ->
     end.
 
 %% @private
+%% @doc Attempts to write out any collected coverage data to the cover/
+%% directory. This function should not be called externally, but it could be.
 ensure_coverage_ends() ->
     case os:getenv("COVER") of
         false -> ok;
@@ -150,17 +99,7 @@ ensure_coverage_ends() ->
                      term_to_binary({make_ref(), now()})
                 ))
             ]),
-            X = cover:export("cover/" ++ Name ++ ".coverdata"),
-            io:format("X ~p~n", [X])
-    end.
-
-%% @spec end_tests() -> ok
-%% @doc End the current test plan and output test results.
-end_tests() ->
-    ensure_coverage_ends(),
-    case whereis(etap_server) of
-        undefined -> ok;
-        _ -> etap_server ! done, ok
+            cover:export("cover/" ++ Name ++ ".coverdata")
     end.
 
 %% @spec coverage_report() -> ok
@@ -258,17 +197,41 @@ fun_is(Fun, Expected, Desc) when is_function(Fun) ->
     is(Fun(Expected), true, Desc).
 
 %% @equiv skip(TestFun, "")
-skip(TestFun) ->
+skip(TestFun) when is_function(TestFun) ->
     skip(TestFun, "").
 
 %% @spec skip(TestFun, Reason) -> ok
 %%       TestFun = function()
 %%       Reason = string()
 %% @doc Skip a test.
-skip(TestFun, Reason) ->
+skip(TestFun, Reason) when is_function(TestFun), is_list(Reason) ->
     begin_skip(Reason),
     catch TestFun(),
     end_skip(),
+    ok.
+
+%% @spec skip(Q, TestFun, Reason) -> ok
+%%       Q = true | false | function() 
+%%       TestFun = function()
+%%       Reason = string()
+%% @doc Skips a test conditionally. The first argument to this function can
+%% either be the 'true' or 'false' atoms or a function that returns 'true' or
+%% 'false'.
+skip(QFun, TestFun, Reason) when is_function(QFun), is_function(TestFun), is_list(Reason) ->
+    case QFun() of
+        true -> begin_skip(Reason), TestFun(), end_skip();
+        _ -> TestFun()
+    end,
+    ok;
+
+skip(Q, TestFun, Reason) when is_function(TestFun), is_list(Reason), Q == true ->
+    begin_skip(Reason),
+    TestFun(),
+    end_skip(),
+    ok;
+
+skip(_, TestFun, Reason) when is_function(TestFun), is_list(Reason) ->
+    TestFun(),
     ok.
 
 %% @private
@@ -317,7 +280,7 @@ test_server(State) ->
     NewState = receive
         {_From, plan, N} ->
             io:format("# Current time local ~s~n", [datetime(erlang:localtime())]),
-            io:format("# Using etap version 0.3~n"),
+            io:format("# Using etap version ~p~n", [ proplists:get_value(vsn, proplists:get_value(attributes, etap:module_info())) ]),
             io:format("1..~p~n", [N]),
             State#test_state{
                 planned = N,

@@ -106,9 +106,7 @@ Things that can greatly be improved. Please fork this project and contribute. Pa
 
  * Support for testing multi-node systems and environments.
  * OTP behaviors like gen\_server, gen\_fsm and gen\_event
- * Web requests
  * Things like the error\_logger and sasl
- * Code coverage report look and feel
  * C1 code coverage reporting and html output
  * Documentation
 
@@ -124,6 +122,6 @@ If you haven't been a test-first developer before, now is the best time to start
 CREDITS
 =======
 
-2008 Nick Gerakines<br />
+2008-2009 Nick Gerakines<br />
 2007-2008 Jeremy Wall<br />
 2008 Jacob Vorreuter
