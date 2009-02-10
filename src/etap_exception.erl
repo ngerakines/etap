@@ -41,12 +41,12 @@ lives_ok(F, Desc) ->
 
 %% @doc Assert that the exception thrown by a function matches the given exception.
 throws_ok(F, Exception, Desc) ->
-    etap:ok((fun(Resp) ->
-        case Resp of
-            {_, Exception} -> true;
-            _ -> false
-        end
-    end)(try_this(F)), Desc).
+    try F() of
+        _ -> etap:ok(nok, Desc)
+    catch
+        _:E ->
+            etap:is(E, Exception, Desc)
+    end.
 
 % ---
 % Internal / Private functions

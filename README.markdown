@@ -91,9 +91,7 @@ There are a number of proposals listed on the TAP wiki that are not supported by
  * LIMITED SUPPORTED: TAP diagnostic syntax
  * LIMITED SUPPORTED: TAP meta information
  * LIMITED SUPPORTED: TAP logging syntax
- * NOT SUPPORTED: Test groups
- * NOT SUPPORTED: Test blocks
- * LIMITED SUPPORTED: SKIP
+ * SUPPORTED: SKIP
  * NOT SUPPORTED: TODO
  * SUPPORTED: TAP datetime
  * SUPPORTED: c0 code coverage
