@@ -30,8 +30,8 @@
 % External / Public functions
 
 %% @doc Assert that a given variable is a pid.
-is_pid(Pid, Desc) ->
-    etap:ok(erlang:is_pid(Pid), Desc).
+is_pid(Pid, Desc) when is_pid(Pid) -> etap:ok(true, Desc);
+is_pid(_, Desc) -> etap:ok(false, Desc).
 
 %% @doc Assert that a given process/pid is alive.
 is_alive(Pid, Desc) ->

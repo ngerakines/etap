@@ -39,6 +39,7 @@ create() ->
     ),
     index(Modules).
 
+%% @private
 index(Modules) ->
     {ok, IndexFD} = file:open("cover/index.html", [write]),
     io:format(IndexFD, "<html><head><style>

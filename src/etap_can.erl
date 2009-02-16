@@ -31,99 +31,49 @@
     has_attrib/2, is_attrib/3, is_behaviour/2
 ]).
 
-% ---
-% External / Public functions
-
 %% @spec loaded_ok(atom(), string()) -> true | false
 %% @doc Assert that a module has been loaded successfully.
 loaded_ok(M, Desc) when is_atom(M) ->
-    etap:ok(test_loaded(M) orelse try_load(M), Desc). % first see if it's loaded then load it
+    etap:fun_is(fun({module, _}) -> true; (_) -> false end, code:load_file(M), Desc).
 
 %% @spec can_ok(atom(), atom()) -> true | false
 %% @doc Assert that a module exports a given function.
 can_ok(M, F) when is_atom(M), is_atom(F) ->
-    test_loaded(M) orelse try_load(M),
-    etap:ok(function_exists(M, F), lists:concat([M, " can ", F])).
+    Matches = [X || {X, _} <- M:module_info(exports), X == F],
+    etap:ok(Matches > 0, lists:concat([M, " can ", F])).
 
 %% @spec can_ok(atom(), atom(), integer()) -> true | false
 %% @doc Assert that a module exports a given function with a given arity.
 can_ok(M, F, A) when is_atom(M); is_atom(F), is_number(A) ->
-    test_loaded(M) orelse try_load(M),
-    etap:ok(function_exists(M, F, A), lists:concat([M, " can ", F, "/", A])).
+    Matches = [X || X <- M:module_info(exports), X == {F, A}],
+    etap:ok(Matches > 0, lists:concat([M, " can ", F, "/", A])).
 
-has_attrib(M, A) when is_atom(M) andalso is_atom(A) ->
-    test_loaded(M) orelse try_load(M),
-    etap:ok(attribute_exists(M, A),
-        lists:concat([M, " has attribute ", A])).
+%% @spec has_attrib(M, A) -> true | false
+%%       M = atom()
+%%       A = atom()
+%% @doc Asserts that a module has a given attribute.
+has_attrib(M, A) when is_atom(M), is_atom(A) ->
+    etap:isnt(
+        proplists:get_value(A, M:module_info(attributes), 'asdlkjasdlkads'),
+        'asdlkjasdlkads',
+        lists:concat([M, " has attribute ", A])
+    ).
 
+%% @spec has_attrib(M, A. V) -> true | false
+%%       M = atom()
+%%       A = atom()
+%%       V = any()
+%% @doc Asserts that a module has a given attribute with a given value.
 is_attrib(M, A, V) when is_atom(M) andalso is_atom(A) ->
-    test_loaded(M) orelse try_load(M),
-    etap:ok(attribute_exists(M, A, V),
-        lists:concat([M, "'s ", A, " is ", V])).
+    etap:is(
+        proplists:get_value(A, M:module_info(attributes)),
+        [V],
+        lists:concat([M, "'s ", A, " is ", V])
+    ).
 
+%% @spec is_behavior(M, B) -> true | false
+%%       M = atom()
+%%       B = atom()
+%% @doc Asserts that a given module has a specific behavior.
 is_behaviour(M, B) when is_atom(M) andalso is_atom(B) ->
     is_attrib(M, behaviour, B).
-
-% ---
-% Internal / Private functions
-
-%% @private
-%% @doc Determine if a module has been loaded with code:is_loaded/1
-test_loaded(M) ->
-    case code:is_loaded(M) of
-        {file, _Loaded} -> true;
-        _ -> false
-    end.
-
-%% @private
-%% @doc Attempt to load a module.
-try_load(M) ->
-    case code:load_file(M) of
-       {module, _Loaded} -> true;
-        _ -> false
-    end.
-
-%% @private
-%% @doc determine module attribute exists
-attribute_exists(M, A) ->
-    case lists:keysearch(A, 1, M:module_info(attributes)) of
-        {value, _} -> true;
-        _ -> false
-    end.
-attribute_exists(M, A, V) ->
-    F = fun(I) -> 
-        case I of
-            V ->
-                true;
-            _ ->
-                false
-        end
-    end,
-    case lists:keysearch(A, 1, M:module_info(attributes)) of
-        {value, {A, L}} when is_list(L) -> 
-            lists:any(F, L);
-        {value, {A, _}} -> 
-            true;
-        _ ->
-            false
-    end.
-
-
-%% @private
-%% @doc Determine if a function exists within a function by
-%% looking at it's exported functions.
-function_exists(M, F) ->
-    case lists:keysearch(F, 1, M:module_info(exports)) of
-        {value, _} -> true;
-        _ -> false
-    end. 
-
-%% @private
-%% @doc Determine if a function/arity exists within a function
-%% by looking at it's exported functions.
-function_exists(M, F, A) ->
-    L = [X || X <- M:module_info(exports), X == {F,A}],
-    case lists:keysearch(F, 1, L) of
-        {value, {_, A}} -> true;
-        _ -> false
-    end. 
