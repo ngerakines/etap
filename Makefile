@@ -1,5 +1,6 @@
 LIBDIR=`erl -eval 'io:format("~s~n", [code:lib_dir()])' -s init stop -noshell`
 .PHONY: doc
+VERSION=0.3.3
 
 all:
 	mkdir -p ebin
@@ -21,10 +22,11 @@ clean:
 	(cd t;$(MAKE) clean)
 	rm -rf cover/
 
-dist-src:
-	mkdir etap-0.3.3/ && cp -rfv src support Makefile etap-0.3.3/
-	tar zcf etap-0.3.3.tgz etap-0.3.3
+package: clean
+	@mkdir etap-$(VERSION)/ && cp -rf ChangeLog Makefile README.markdown scripts sources src support t etap-$(VERSION)
+	@COPYFILE_DISABLE=true tar zcf etap-$(VERSION).tgz etap-$(VERSION)
+	@rm -rf etap-$(VERSION)/
 
-install: all
-	mkdir -p ${LIBDIR}/etap-0.3.3/{ebin,include}
-	for i in ebin/*.beam; do install $$i $(LIBDIR)/etap-0.3.3/$$i ; done
+install:
+	mkdir -p $(prefix)/$(LIBDIR)/etap-$(VERSION)/ebin
+	for i in ebin/*.beam; do install $$i $(prefix)/$(LIBDIR)/etap-$(VERSION)/$$i ; done
