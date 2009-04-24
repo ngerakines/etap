@@ -23,7 +23,7 @@ clean:
 	rm -rf cover/
 
 package: clean
-	@mkdir etap-$(VERSION)/ && cp -rf ChangeLog Makefile README.markdown scripts sources src support t etap-$(VERSION)
+	@mkdir etap-$(VERSION)/ && cp -rf ChangeLog Makefile README.markdown scripts src support t etap-$(VERSION)
 	@COPYFILE_DISABLE=true tar zcf etap-$(VERSION).tgz etap-$(VERSION)
 	@rm -rf etap-$(VERSION)/
 

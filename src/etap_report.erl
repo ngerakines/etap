@@ -151,15 +151,15 @@ output_lines(Data, WriteFD, SourceFD, LineNumber) ->
         Line = "% " ++ _ ->
             io:format(WriteFD, "~s", [out_line(LineNumber, none, Line)]),
             output_lines(NextData, WriteFD, SourceFD, LineNumber + 1);
-    	Line ->
-    	    case Match of
-    	        {true, CC} ->
-    	            io:format(WriteFD, "~s", [out_line(LineNumber, CC, Line)]),
-    	            output_lines(NextData, WriteFD, SourceFD, LineNumber + 1);
-    	        false ->
-    	            io:format(WriteFD, "~s", [out_line(LineNumber, none, Line)]),
-    	            output_lines(NextData, WriteFD, SourceFD, LineNumber + 1)
-    	    end
+        Line ->
+            case Match of
+                {true, CC} ->
+                    io:format(WriteFD, "~s", [out_line(LineNumber, CC, Line)]),
+                    output_lines(NextData, WriteFD, SourceFD, LineNumber + 1);
+                false ->
+                    io:format(WriteFD, "~s", [out_line(LineNumber, none, Line)]),
+                    output_lines(NextData, WriteFD, SourceFD, LineNumber + 1)
+            end
     end.
 
 %% @private
