@@ -1,6 +1,6 @@
 LIBDIR=`erl -eval 'io:format("~s~n", [code:lib_dir()])' -s init stop -noshell`
 .PHONY: doc
-VERSION=0.3.3
+VERSION=0.3.4
 
 all:
 	mkdir -p ebin

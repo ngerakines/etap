@@ -23,7 +23,7 @@
 %% 
 %% @author Nick Gerakines <nick@gerakines.net> [http://socklabs.com/]
 %% @author Jeremy Wall <jeremy@marzhillstudios.com>
-%% @version 0.3.3
+%% @version 0.3.4
 %% @copyright 2007-2008 Jeremy Wall, 2008-2009 Nick Gerakines
 %% @reference http://testanything.org/wiki/index.php/Main_Page
 %% @reference http://en.wikipedia.org/wiki/Test_Anything_Protocol
@@ -52,12 +52,17 @@
     datetime/1, skip/3
 ]).
 -record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, skip_reason = ""}).
--vsn("0.3.3").
+-vsn("0.3.4").
 
 %% @spec plan(N) -> Result
-%%       N = skip | {skip, string()} | integer()
+%%       N = unknown | skip | {skip, string()} | integer()
 %%       Result = ok
 %% @doc Create a test plan and boot strap the test server.
+plan(unknown) ->
+    ensure_coverage_starts(),
+    ensure_test_server(),
+    etap_server ! {self(), plan, unknown},
+    ok;
 plan(skip) ->
     io:format("1..0 # skip~n");
 plan({skip, Reason}) ->
@@ -70,8 +75,17 @@ plan(N) when is_integer(N), N > 0 ->
 
 %% @spec end_tests() -> ok
 %% @doc End the current test plan and output test results.
+%% @todo This should probably be done in the test_server process.
 end_tests() ->
     ensure_coverage_ends(),
+    etap_server ! {self(), state},
+    State = receive X -> X end,
+    if
+        State#test_state.planned == -1 ->
+            io:format("1..~p~n", [State#test_state.count]);
+        true ->
+            ok
+    end,
     case whereis(etap_server) of
         undefined -> ok;
         _ -> etap_server ! done, ok
@@ -278,6 +292,17 @@ start_etap_server() ->
 %% message that clears the current test state.
 test_server(State) ->
     NewState = receive
+        {_From, plan, unknown} ->
+            io:format("# Current time local ~s~n", [datetime(erlang:localtime())]),
+            io:format("# Using etap version ~p~n", [ proplists:get_value(vsn, proplists:get_value(attributes, etap:module_info())) ]),
+            State#test_state{
+                planned = -1,
+                count = 0,
+                pass = 0,
+                fail = 0,
+                skip = 0,
+                skip_reason = ""
+            };
         {_From, plan, N} ->
             io:format("# Current time local ~s~n", [datetime(erlang:localtime())]),
             io:format("# Using etap version ~p~n", [ proplists:get_value(vsn, proplists:get_value(attributes, etap:module_info())) ]),

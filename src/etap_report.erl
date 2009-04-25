@@ -291,7 +291,7 @@ header(Module, Good, Bad) ->
           </head>
           <body>
             <h3>C0 code coverage information</h3>
-            <p>Generated on ~s with <a href='http://github.com/ngerakines/etap'>etap 0.3.3</a>.
+            <p>Generated on ~s with <a href='http://github.com/ngerakines/etap'>etap 0.3.4</a>.
             </p>            
         <table class='report'>
           <thead>
@@ -335,7 +335,7 @@ header(Module, Good, Bad) ->
 
 %% @private
 footer() ->
-    "</pre><hr /><p>Generated using <a href='http://github.com/ngerakines/etap'>etap 0.3.3</a>.</p>
+    "</pre><hr /><p>Generated using <a href='http://github.com/ngerakines/etap'>etap 0.3.4</a>.</p>
           </body>
         </html>
     ".
