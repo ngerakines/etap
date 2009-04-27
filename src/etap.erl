@@ -49,7 +49,7 @@
     diag/1, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
     any/3, none/3, fun_is/3, is_greater/3, skip/1, skip/2,
     ensure_coverage_starts/0, ensure_coverage_ends/0, coverage_report/0,
-    datetime/1, skip/3
+    datetime/1, skip/3, bail/0, bail/1
 ]).
 -record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, skip_reason = ""}).
 -vsn("0.3.4").
@@ -128,6 +128,16 @@ coverage_report() ->
         cover:imported_modules()
     ),
     ok.
+
+bail() ->
+    bail("").
+
+bail(Reason) ->
+    etap_server ! {self(), diag, "Bail out! " ++ Reason},
+    ensure_coverage_ends(),
+    etap_server ! done, ok,
+    ok.
+
 
 %% @spec diag(S) -> ok
 %%       S = string()
