@@ -186,7 +186,7 @@ find_source(Module) when is_atom(Module) ->
     Root = filename:rootname(Module),
     Dir = filename:dirname(Root),
     find_source([
-        filelib:is_file(Root ++ ".src"),
+        filename:join([Dir, Root ++ ".erl"]),
         filename:join([Dir, "..", "src", Root ++ ".erl"]),
         filename:join([Dir, "src", Root ++ ".erl"]),
         filename:join([Dir, "elibs", Root ++ ".erl"]),
