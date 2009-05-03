@@ -33,7 +33,10 @@
 
 %% @doc Assert that an exception is raised when running a given function.
 dies_ok(F, Desc) ->
-    etap:isnt(try_this(F), success, Desc).
+    case (catch F()) of
+        {'EXIT', _} -> etap:ok(true, Desc);
+        _ -> etap:ok(false, Desc)
+    end.
 
 %% @doc Assert that an exception is not raised when running a given function.
 lives_ok(F, Desc) ->

@@ -185,12 +185,14 @@ datas_match(Data, _) -> {false, Data}.
 find_source(Module) when is_atom(Module) ->
     Root = filename:rootname(Module),
     Dir = filename:dirname(Root),
+    XDir = case os:getenv("SRC") of false -> "src"; X -> X end,
     find_source([
         filename:join([Dir, Root ++ ".erl"]),
         filename:join([Dir, "..", "src", Root ++ ".erl"]),
         filename:join([Dir, "src", Root ++ ".erl"]),
         filename:join([Dir, "elibs", Root ++ ".erl"]),
-        filename:join([Dir, "..", "elibs", Root ++ ".erl"])
+        filename:join([Dir, "..", "elibs", Root ++ ".erl"]),
+        filename:join([Dir, XDir, Root ++ ".erl"])
     ]);
 find_source([]) -> none;
 find_source([Test | Tests]) ->

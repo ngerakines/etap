@@ -200,7 +200,7 @@ is_greater(ValueA, ValueB, Desc) when is_integer(ValueA), is_integer(ValueB) ->
 %%       Result = true | false
 %% @doc Assert that an item is in a list.
 any(Got, Items, Desc) ->
-    is(lists:any(Got, Items), true, Desc).
+    is(lists:member(Got, Items), true, Desc).
 
 %% @spec none(Got, Items, Desc) -> Result
 %%       Got = any()
@@ -209,7 +209,7 @@ any(Got, Items, Desc) ->
 %%       Result = true | false
 %% @doc Assert that an item is not in a list.
 none(Got, Items, Desc) ->
-    is(lists:any(Got, Items), false, Desc).
+    is(not lists:member(Got, Items), false, Desc).
 
 %% @spec fun_is(Fun, Expected, Desc) -> Result
 %%       Fun = function()
