@@ -46,7 +46,7 @@
 -module(etap).
 -export([
     ensure_test_server/0, start_etap_server/0, test_server/1,
-    diag/1, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
+    diag/1, diag/2, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
     any/3, none/3, fun_is/3, is_greater/3, skip/1, skip/2,
     ensure_coverage_starts/0, ensure_coverage_ends/0, coverage_report/0,
     datetime/1, skip/3, bail/0, bail/1
@@ -143,6 +143,15 @@ bail(Reason) ->
 %%       S = string()
 %% @doc Print a debug/status message related to the test suite.
 diag(S) -> etap_server ! {self(), diag, "# " ++ S}, ok.
+
+%% @spec diag(Format, Data) -> ok
+%%      Format = atom() | string() | binary()
+%%      Data = [term()]
+%%      UnicodeList = [Unicode]
+%%      Unicode = int() representing valid unicode codepoint
+%% @doc Print a debug/status message related to the test suite.
+%% Function arguments are passed through io_lib:format/2.
+diag(Format, Data) -> diag(io_lib:format(Format, Data)).
 
 %% @spec ok(Expr, Desc) -> Result
 %%       Expr = true | false
