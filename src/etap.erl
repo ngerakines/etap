@@ -148,7 +148,7 @@ diag(S) -> etap_server ! {self(), diag, "# " ++ S}, ok.
 %%      Format = atom() | string() | binary()
 %%      Data = [term()]
 %%      UnicodeList = [Unicode]
-%%      Unicode = int() representing valid unicode codepoint
+%%      Unicode = int()
 %% @doc Print a debug/status message related to the test suite.
 %% Function arguments are passed through io_lib:format/2.
 diag(Format, Data) -> diag(io_lib:format(Format, Data)).
