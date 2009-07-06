@@ -59,21 +59,12 @@ has_attrib(M, A) when is_atom(M), is_atom(A) ->
         lists:concat([M, " has attribute ", A])
     ).
 
-%% @spec has_attrib(M, A. V) -> true | false
-%%       M = atom()
-%%       A = atom()
-%%       V = any()
-%% @doc Asserts that a module has a given attribute with a given value.
-is_attrib(M, A, V) when is_atom(M) andalso is_atom(A) ->
+is_attrib(M, A, V) when is_atom(M), is_atom(A) ->
     etap:is(
         proplists:get_value(A, M:module_info(attributes)),
         [V],
         lists:concat([M, "'s ", A, " is ", V])
     ).
 
-%% @spec is_behavior(M, B) -> true | false
-%%       M = atom()
-%%       B = atom()
-%% @doc Asserts that a given module has a specific behavior.
 is_behaviour(M, B) when is_atom(M) andalso is_atom(B) ->
     is_attrib(M, behaviour, B).
