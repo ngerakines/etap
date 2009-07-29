@@ -1,0 +1,75 @@
+
+@title A TAP testing client.
+@author Nick Gerakines <nick@gerakines.net>
+@author Jeremy Wall <jeremy@marzhillstudios.com>
+@version 0.3.4
+@doc A TAP testing client.
+
+<p>etap is a collection of Erlang modules that provide a TAP testing client library. These modules allow developers to create extensive and comprehensive tests covering many aspects of application and module development. This includes simple assertions, exceptions, the application behavior and event web requests. This library was originally written by Jeremy wall.</p>
+<p>As per the TAP wiki:</p>
+<blockquote>TAP, the Test Anything Protocol, is a simple text-based interface between testing modules in a test harness. TAP started life as part of the test harness for Perl but now has implementations in C/C++, Python, PHP, Perl and probably others by the time you read this.</blockquote>
+<p>These modules are not meant to compete with eunit, but to offer a more general testing facility that isn't provides by eunit.</p>
+<pre><code>http://en.wikipedia.org/wiki/Test_Anything_Protocol
+http://testanything.org/wiki/index.php/Main_Page
+</code></pre>
+
+<h1>CREATING TESTS</h1>
+
+<p>A test is any number of etap:* or etap_*:* tests that are part of a test plan. When a plan is created using etap:plan/1, a process is started that tracks the status of the tests executed and handles diagnostic output.</p>
+<p>Consider the following example test plan:</p>
+<pre><code>etap:plan(3),
+etap:ok(true, "the 'true' atom is recognized"),
+etap:is(1 + 1, 2, "simple math"),
+etap:isnt(2 + 2, 5, "some would argue"),
+etap:end_tests().
+</code></pre>
+<p>At this time, etap does not support pattern matching. To work around this there are a number of utility tests that can be used. The etap:any/3, etap:none/3 and etap:fun_is/3 use functions to return either <code>true</code> or <code>false</code>.</p>
+<pre><code>Numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9],
+FunWithNumbers = fun(X) case X of [1, 2, 3 | _] -&gt; true; _ -&gt; false end end,
+etap:fun_is(FunWithNumbers, Numbers, "Match the first three numbers").
+</code></pre>
+
+<p>There are many examples in t/*.erl.</p>
+
+<h1>BUILD &amp; INSTALL</h1>
+
+<p>To build this library, from the root directory execute the <code>make</code> command. You should also execute the <code>make test</code> command to verify that the library functions correctly on your system. If you have the Perl module TAP::Harness you can use it to collect and display test results using the <code>make prove</code> target.</p>
+
+<pre><code>$ make
+$ make test
+$ make prove
+</code></pre>
+
+<p>If you choose to run the <code>make test</code> command then please be sure to <code>make clean</code> after to remove any of the temporary beam files created by the tests in the <code>t/</code> directory.</p>
+
+<p>The included tests cover the basic functionality of the etap modules. They can also be used as a reference when writing your own tests. </p>
+
+<p>To install etap you need to create the <code>etap/ebin/</code> directory in your current Erlang library and copy all of the .beam files created by the <code>make</code> file.</p>
+
+<pre><code>$ sudo mkdir -p /usr/lib/erlang/lib/etap-0.3.4/ebin
+$ make clean &amp;&amp; make
+$ sudo cp ebin/*.beam /usr/lib/erlang/lib/etap-0.3.4/ebin/
+</code></pre>
+
+<p>The <code>make dist-src</code> target can be used to create source distributions for further packaging and deployment.</p>
+
+<h1>SUPPORTED FUNCTIONALITY</h1>
+
+<p>There are a number of proposals listed on the TAP wiki that are not supported by this library. Please be aware of this when creating your tests.</p>
+
+<ul>
+<li>LIMITED SUPPORTED: TAP diagnostic syntax</li>
+<li>LIMITED SUPPORTED: TAP meta information</li>
+<li>LIMITED SUPPORTED: TAP logging syntax</li>
+<li>NOT SUPPORTED: Test groups</li>
+<li>NOT SUPPORTED: Test blocks</li>
+<li>LIMITED SUPPORTED: SKIP</li>
+<li>NOT SUPPORTED: TODO</li>
+<li>LIMITED SUPPORTED: TAP datetime</li>
+</ul>
+
+<h1>CREDITS</h1>
+
+<p>2008 Nick Gerakines<br />
+2007-2008 Jeremy Wall<br />
+2008 Jacob Vorreuter</p>
