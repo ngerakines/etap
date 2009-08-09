@@ -218,7 +218,7 @@ any(Got, Items, Desc) ->
 %%       Result = true | false
 %% @doc Assert that an item is not in a list.
 none(Got, Items, Desc) ->
-    is(not lists:member(Got, Items), false, Desc).
+    is(lists:member(Got, Items), false, Desc).
 
 %% @spec fun_is(Fun, Expected, Desc) -> Result
 %%       Fun = function()
