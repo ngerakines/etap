@@ -59,8 +59,8 @@ index(Modules) ->
                     CovPer = round((Good / (Good + Bad)) * 100),
                     UnCovPer = round((Bad / (Good + Bad)) * 100),
                     RowClass = case LastRow of 1 -> "odd"; _ -> "even" end,
-                    io:format(IndexFD, "<div class=\"~s\">", [RowClass]),
-                    io:format(IndexFD, "<a href=\"~s\">~s</a>", [atom_to_list(Module) ++ "_report.html", atom_to_list(Module)]),
+                    io:format(IndexFD, "<table width='100%' class=\"~s\">", [RowClass]),
+                    io:format(IndexFD, "<tr><td><a href=\"~s\">~s</a><td>", [atom_to_list(Module) ++ "_report.html", atom_to_list(Module)]),
                     io:format(IndexFD, "
                     <table cellspacing='0' cellpadding='0' align='right'>
                       <tr>
@@ -70,9 +70,9 @@ index(Modules) ->
                           </table>
                         </td>
                       </tr>
-                    </table>
+                    </table></td></tr>~n~n
                     ", [CovPer, CovPer, UnCovPer]),
-                    io:format(IndexFD, "</div>", []),
+                    io:format(IndexFD, "</table>", []),
                     case LastRow of
                         1 -> 0;
                         0 -> 1
@@ -95,9 +95,9 @@ index(Modules) ->
         _ ->
             TotalCovPer = round((TotalGood / (TotalGood + TotalBad)) * 100),
             TotalUnCovPer = round((TotalBad / (TotalGood + TotalBad)) * 100),
-            io:format(IndexFD, "<div>", []),
-            io:format(IndexFD, "Total 
-            <table cellspacing='0' cellpadding='0' align='right'>
+            io:format(IndexFD, "<table width='100%'><tr>", []),
+            io:format(IndexFD, "<td>Total</td> 
+            <td><table cellspacing='0' cellpadding='0' align='right'>
               <tr>
                 <td><tt>~p%</tt>&nbsp;</td><td>
                   <table cellspacing='0' class='percent_graph' cellpadding='0' width='100'>
@@ -105,9 +105,9 @@ index(Modules) ->
                   </table>
                 </td>
               </tr>
-            </table>
+            </table></td></tr>~n~n
             ", [TotalCovPer, TotalCovPer, TotalUnCovPer]),
-            io:format(IndexFD, "</div>", [])
+            io:format(IndexFD, "</table>", [])
     end,
     io:format(IndexFD, "</body></html>", []),
     file:close(IndexFD),
