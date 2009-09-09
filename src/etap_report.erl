@@ -192,7 +192,8 @@ find_source(Module) when is_atom(Module) ->
         filename:join([Dir, "src", Root ++ ".erl"]),
         filename:join([Dir, "elibs", Root ++ ".erl"]),
         filename:join([Dir, "..", "elibs", Root ++ ".erl"]),
-        filename:join([Dir, XDir, Root ++ ".erl"])
+        filename:join([Dir, XDir, Root ++ ".erl"]),
+        filename:join([Dir, code:where_is_file(atom_to_list(Module) ++ ".erl")])
     ]);
 find_source([]) -> none;
 find_source([Test | Tests]) ->
