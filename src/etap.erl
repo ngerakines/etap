@@ -138,11 +138,24 @@ bail(Reason) ->
     etap_server ! done, ok,
     ok.
 
+%% @spec msg(S) -> ok
+%%       S = string()
+%% @doc Print a message in the test output.
+msg(S) -> etap_server ! {self(), diag, S}, ok.
+
+%% @spec msg(Format, Data) -> ok
+%%      Format = atom() | string() | binary()
+%%      Data = [term()]
+%%      UnicodeList = [Unicode]
+%%      Unicode = int()
+%% @doc Print a message in the test output.
+%% Function arguments are passed through io_lib:format/2.
+msg(Format, Data) -> msg(io_lib:format(Format, Data)).
 
 %% @spec diag(S) -> ok
 %%       S = string()
 %% @doc Print a debug/status message related to the test suite.
-diag(S) -> etap_server ! {self(), diag, "# " ++ S}, ok.
+diag(S) -> msg("# " ++ S).
 
 %% @spec diag(Format, Data) -> ok
 %%      Format = atom() | string() | binary()
@@ -152,6 +165,19 @@ diag(S) -> etap_server ! {self(), diag, "# " ++ S}, ok.
 %% @doc Print a debug/status message related to the test suite.
 %% Function arguments are passed through io_lib:format/2.
 diag(Format, Data) -> diag(io_lib:format(Format, Data)).
+
+%% @spec expectation_mismatch_message(Got, Expected, Desc) -> ok
+%%       Got = any()
+%%       Expected = any()
+%%       Desc = string()
+%% @doc Print an expectation mismatch message in the test output.
+expectation_mismatch_message(Got, Expected, Desc) ->
+    msg("    ---"),
+    msg("    description: ~p", [Desc]),
+    msg("    found:       ~p", [Got]),
+    msg("    wanted:      ~p", [Expected]),
+    msg("    ..."),
+    ok.
 
 %% @spec ok(Expr, Desc) -> Result
 %%       Expr = true | false
@@ -176,11 +202,7 @@ not_ok(Expr, Desc) -> mk_tap(Expr == false, Desc).
 is(Got, Expected, Desc) ->
     case mk_tap(Got == Expected, Desc) of
         false ->
-            etap_server ! {self(), diag, "    ---"},
-            etap_server ! {self(), diag, io_lib:format("    description: ~p", [Desc])},
-            etap_server ! {self(), diag, io_lib:format("    found:       ~p", [Got])},
-            etap_server ! {self(), diag, io_lib:format("    wanted:      ~p", [Expected])},
-            etap_server ! {self(), diag, "    ..."},
+            expectation_mismatch_message(Got, Expected, Desc),
             false;
         true -> true
     end.
