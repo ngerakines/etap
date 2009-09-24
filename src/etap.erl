@@ -46,7 +46,8 @@
 -module(etap).
 -export([
     ensure_test_server/0, start_etap_server/0, test_server/1,
-    diag/1, diag/2, plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
+    msg/1, msg/2, diag/1, diag/2, expectation_mismatch_message/3,
+    plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
     any/3, none/3, fun_is/3, is_greater/3, skip/1, skip/2,
     ensure_coverage_starts/0, ensure_coverage_ends/0, coverage_report/0,
     datetime/1, skip/3, bail/0, bail/1
@@ -179,19 +180,36 @@ expectation_mismatch_message(Got, Expected, Desc) ->
     msg("    ..."),
     ok.
 
+% @spec evaluate(Pass, Got, Expected, Desc) -> Result
+%%       Pass = true | false
+%%       Got = any()
+%%       Expected = any()
+%%       Desc = string()
+%%       Result = true | false
+%% @doc Evaluate a test statement, printing an expectation mismatch message
+%%       if the test failed.
+evaluate(Pass, Got, Expected, Desc) ->
+    case mk_tap(Pass, Desc) of
+        false ->
+            expectation_mismatch_message(Got, Expected, Desc),
+            false;
+        true ->
+            true
+    end.
+
 %% @spec ok(Expr, Desc) -> Result
 %%       Expr = true | false
 %%       Desc = string()
 %%       Result = true | false
 %% @doc Assert that a statement is true.
-ok(Expr, Desc) -> mk_tap(Expr == true, Desc).
+ok(Expr, Desc) -> evaluate(Expr == true, Expr, true, Desc).
 
 %% @spec not_ok(Expr, Desc) -> Result
 %%       Expr = true | false
 %%       Desc = string()
 %%       Result = true | false
 %% @doc Assert that a statement is false.
-not_ok(Expr, Desc) -> mk_tap(Expr == false, Desc).
+not_ok(Expr, Desc) -> evaluate(Expr == false, Expr, false, Desc).
 
 %% @spec is(Got, Expected, Desc) -> Result
 %%       Got = any()
@@ -199,13 +217,7 @@ not_ok(Expr, Desc) -> mk_tap(Expr == false, Desc).
 %%       Desc = string()
 %%       Result = true | false
 %% @doc Assert that two values are the same.
-is(Got, Expected, Desc) ->
-    case mk_tap(Got == Expected, Desc) of
-        false ->
-            expectation_mismatch_message(Got, Expected, Desc),
-            false;
-        true -> true
-    end.
+is(Got, Expected, Desc) -> evaluate(Got == Expected, Got, Expected, Desc).
 
 %% @spec isnt(Got, Expected, Desc) -> Result
 %%       Got = any()
@@ -213,7 +225,7 @@ is(Got, Expected, Desc) ->
 %%       Desc = string()
 %%       Result = true | false
 %% @doc Assert that two values are not the same.
-isnt(Got, Expected, Desc) -> mk_tap(Got /= Expected, Desc).
+isnt(Got, Expected, Desc) -> evaluate(Got /= Expected, Got, Expected, Desc).
 
 %% @spec is_greater(ValueA, ValueB, Desc) -> Result
 %%       ValueA = number()
