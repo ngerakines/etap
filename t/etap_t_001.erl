@@ -26,4 +26,6 @@ start() ->
     etap:none(fun([{color, red} | _]) -> true; (_)-> false  end, [[{something, nothing}, {somewhere, nowhere}], [{name, nick}, {has_family, true}], [{record, value}, {term, atom}]], "Proving etap:none/3 works with simple structures"),
     etap:fun_is(fun(Expected) -> case Expected of "abc" ++ _ -> true; _ -> false end end, "abcdefg", "fun_is/3 works with simple lists"),
     etap:fun_is(fun(Expected) -> case Expected of {foo, _} -> true; _ -> false end end, {foo, bar}, "fun_is/3 works with simple lists"),
+    etap:expect_fun(fun(Got) -> case Got of "abc" ++ _ -> true; _ -> false end end, "abcdefg", "expect_fun/3 works with simple lists"),
+    etap:expect_fun(fun(Got) -> case Got of {foo, _} -> true; _ -> false end end, {foo, bar}, "expect_fun/3 works with simple lists"),
     etap:end_tests().

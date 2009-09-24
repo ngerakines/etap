@@ -47,8 +47,8 @@
 -export([
     ensure_test_server/0, start_etap_server/0, test_server/1,
     msg/1, msg/2, diag/1, diag/2, expectation_mismatch_message/3,
-    plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3,
-    any/3, none/3, fun_is/3, is_greater/3, skip/1, skip/2,
+    plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3, any/3, none/3,
+    fun_is/3, expect_fun/3, expect_fun/4, is_greater/3, skip/1, skip/2,
     ensure_coverage_starts/0, ensure_coverage_ends/0, coverage_report/0,
     datetime/1, skip/3, bail/0, bail/1
 ]).
@@ -262,6 +262,27 @@ none(Got, Items, Desc) ->
 %% @doc Use an anonymous function to assert a pattern match.
 fun_is(Fun, Expected, Desc) when is_function(Fun) ->
     is(Fun(Expected), true, Desc).
+
+%% @spec expect_fun(ExpectFun, Got, Desc) -> Result
+%%       ExpectFun = function()
+%%       Got = any()
+%%       Desc = string()
+%%       Result = true | false
+%% @doc Use an anonymous function to assert a pattern match, using actual
+%%       value as the argument to the function.
+expect_fun(ExpectFun, Got, Desc) ->
+    evaluate(ExpectFun(Got), Got, ExpectFun, Desc).
+
+%% @spec expect_fun(ExpectFun, Got, Desc, ExpectStr) -> Result
+%%       ExpectFun = function()
+%%       Got = any()
+%%       Desc = string()
+%%       ExpectStr = string()
+%%       Result = true | false
+%% @doc Use an anonymous function to assert a pattern match, using actual
+%%       value as the argument to the function.
+expect_fun(ExpectFun, Got, Desc, ExpectStr) ->
+    evaluate(ExpectFun(Got), Got, ExpectStr, Desc).
 
 %% @equiv skip(TestFun, "")
 skip(TestFun) when is_function(TestFun) ->
