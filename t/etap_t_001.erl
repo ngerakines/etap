@@ -3,6 +3,8 @@
 
 -record(tester, {xx, yy, zz}).
 
+-include("etap.hrl").
+
 start() ->
     etap:plan(16),
     etap:diag("Test the core etap module and it's functions."),
@@ -27,5 +29,8 @@ start() ->
     etap:fun_is(fun(Expected) -> case Expected of "abc" ++ _ -> true; _ -> false end end, "abcdefg", "fun_is/3 works with simple lists"),
     etap:fun_is(fun(Expected) -> case Expected of {foo, _} -> true; _ -> false end end, {foo, bar}, "fun_is/3 works with simple lists"),
     etap:expect_fun(fun(Got) -> case Got of "abc" ++ _ -> true; _ -> false end end, "abcdefg", "expect_fun/3 works with simple lists"),
-    etap:expect_fun(fun(Got) -> case Got of {foo, _} -> true; _ -> false end end, {foo, bar}, "expect_fun/3 works with simple lists"),
+    etap:expect_fun(fun(Got) -> case Got of {foo, _} -> true; _ -> false end end, {foo, bar}, "expect_fun/3 works with simple structures"),
+    ?ETAP_MATCH("abcdefg", "abc" ++ _, "ETAP_MATCH/3 works with simple lists"),
+    ?ETAP_MATCH({foo, bar}, {foo, _}, "ETAP_MATCH/3 works with simple structures"),
+    ?ETAP_MATCH({foo, bar, baz}, {foo, _}, "Example ETAP_MATCH/3 failure"),
     etap:end_tests().

@@ -25,7 +25,13 @@ Consider the following example test plan:
     etap:isnt(2 + 2, 5, "some would argue"),
     etap:end_tests().
 
-At this time, etap does not support pattern matching. To work around this there are a number of utility tests that can be used. The etap:any/3, etap:none/3 and etap:fun\_is/3 use functions to return either 'true' or 'false'.
+For tests that require pattern matching, a macro can be used.
+
+    -include("etap.hrl").
+    ...
+    ?ETAP_MATCH({foo, bar, baz}, {foo, _, _}, "a three-element tuple with foo as the first element"),
+
+There are a number of utility tests that can be used. The etap:any/3, etap:none/3, etap:fun\_is/3, and etap:expect\_fun/3 use functions to return either 'true' or 'false'.
 
     Numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9],
     FunWithNumbers = fun(X) case X of [1, 2, 3 | _] -> true; _ -> false end end,
