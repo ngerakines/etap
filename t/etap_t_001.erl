@@ -30,7 +30,7 @@ start() ->
     etap:fun_is(fun(Expected) -> case Expected of {foo, _} -> true; _ -> false end end, {foo, bar}, "fun_is/3 works with simple lists"),
     etap:expect_fun(fun(Got) -> case Got of "abc" ++ _ -> true; _ -> false end end, "abcdefg", "expect_fun/3 works with simple lists"),
     etap:expect_fun(fun(Got) -> case Got of {foo, _} -> true; _ -> false end end, {foo, bar}, "expect_fun/3 works with simple structures"),
-    ?ETAP_MATCH("abcdefg", "abc" ++ _, "ETAP_MATCH/3 works with simple lists"),
-    ?ETAP_MATCH({foo, bar}, {foo, _}, "ETAP_MATCH/3 works with simple structures"),
-    ?ETAP_MATCH({foo, bar, baz}, {foo, _}, "Example ETAP_MATCH/3 failure"),
+    ?etap_match("abcdefg", "abc" ++ _, "?etap_match/3 works with simple lists"),
+    ?etap_match({foo, bar}, {foo, _}, "?etap_match/3 works with simple structures"),
+    ?etap_match({foo, bar, baz}, {foo, _}, "Example ?etap_match/3 failure"),
     etap:end_tests().

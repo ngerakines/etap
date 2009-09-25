@@ -21,11 +21,11 @@
 %% FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 %% OTHER DEALINGS IN THE SOFTWARE.
 
-%% @spec ?MATCH(Got, Expected, Desc) -> Result
+%% @spec ?etap_match(Got, Expected, Desc) -> Result
 %%       Got = any()
 %%       Expected = any()
 %%       Desc = string()
 %%       Result = true | false
 %% @doc Assert that a value matches a match spec.
--define(ETAP_MATCH(Got, Expected, Desc),
+-define(etap_match(Got, Expected, Desc),
         etap:expect_fun(fun(X) -> case X of Expected -> true; _ -> false end end, Got, Desc, ??Expected)).
