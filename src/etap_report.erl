@@ -80,7 +80,7 @@ index(Modules) ->
             end
         end,
         0,
-        Modules
+        lists:sort(Modules)
     ),
     {TotalGood, TotalBad} = lists:foldl(
         fun({_, {Good, Bad, Source}}, {TGood, TBad}) ->
