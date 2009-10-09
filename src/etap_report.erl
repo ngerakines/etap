@@ -117,9 +117,10 @@ index(Modules) ->
 file_report(Module) ->
     {ok, Data} = cover:analyse(Module, calls, line),
     Source = find_source(Module),
+    io:format("Generating coverage report for ~p (source: ~p)~n", [Module, Source]),
     {Good, Bad} = collect_coverage(Data, {0, 0}),
     case {Source, Good + Bad} of
-        {none, _} -> ok;
+        {none, _} -> io:format("Warning: Couldn't locate source file for ~p.~n", [Module]), ok;
         {_, 0} -> ok;
         _ ->
             {ok, SourceFD} = file:open(Source, [read]),
@@ -183,23 +184,55 @@ datas_match(Data, _) -> {false, Data}.
 
 %% @private
 find_source(Module) when is_atom(Module) ->
-    Root = filename:rootname(Module),
-    Dir = filename:dirname(Root),
-    XDir = case os:getenv("SRC") of false -> "src"; X -> X end,
-    find_source([
-        filename:join([Dir, Root ++ ".erl"]),
-        filename:join([Dir, "..", "src", Root ++ ".erl"]),
-        filename:join([Dir, "src", Root ++ ".erl"]),
-        filename:join([Dir, "elibs", Root ++ ".erl"]),
-        filename:join([Dir, "..", "elibs", Root ++ ".erl"]),
-        filename:join([Dir, XDir, Root ++ ".erl"]),
-        filename:join([Dir, code:where_is_file(atom_to_list(Module) ++ ".erl")])
-    ]);
-find_source([]) -> none;
-find_source([Test | Tests]) ->
+    Filename = atom_to_list(Module) ++ ".erl",
+    case code:where_is_file(Filename) of
+        non_existing -> search_for_file(Filename);
+        Absname -> Absname
+    end.
+
+search_for_file(Filename) ->
+    SrcDir = case os:getenv("SRC") of false -> []; X -> [X] end,
+    search_for_file(Filename,
+                    SrcDir ++
+                    ["src",
+                     "elibs",
+                     filename:join(["..", "src"]),
+                     filename:join(["..", "elibs"]),
+                     "."]).
+search_for_file(_Filename, []) ->
+    none;
+search_for_file(Filename, [Dir|Dirs]) ->
+    case search_subdirs(Dir, Filename, 0) of
+        none -> search_for_file(Dirs);
+        Match -> Match
+    end.
+
+search_subdirs(Dir, Filename, 0) ->
+    Test = filename:join([Dir, Filename]),
     case filelib:is_file(Test) of
         true -> Test;
-        false -> find_source(Tests)
+        false -> search_subdirs(Dir, Filename, 1)
+    end;
+search_subdirs(Dir, Filename, 1) ->
+    Test = filename:join([Dir, "*", Filename]),
+    case filelib:wildcard(Test) of
+        [] -> search_subdirs(Dir, Filename, 2);
+        [Match] -> Match;
+        Other -> {search_error, Other}
+    end;
+search_subdirs(Dir, Filename, 2) ->
+    Test = filename:join([Dir, "*", "*", Filename]),
+    case filelib:wildcard(Test) of
+        [] -> search_subdirs(Dir, Filename, 2);
+        [Match] -> Match;
+        Other -> {search_error, Other}
+    end;
+search_subdirs(Dir, Filename, 3) ->
+    Test = filename:join([Dir, "*", "*", "*", Filename]),
+    case filelib:wildcard(Test) of
+        [] -> none;
+        [Match] -> Match;
+        Other -> {search_error, Other}
     end.
 
 %% @private
