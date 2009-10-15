@@ -29,3 +29,18 @@
 %% @doc Assert that a value matches a match spec.
 -define(etap_match(Got, Expected, Desc),
         etap:expect_fun(fun(X) -> case X of Expected -> true; _ -> false end end, Got, Desc, ??Expected)).
+
+%% @spec ?etap_throws_match(F, ErrMatch, Desc) -> Result
+%%       F = fun()
+%%       ErrMatch = any()
+%%       Desc = string()
+%%       Result = true | false
+%% @doc Assert that the exception thrown by a function matches the given exception.
+%%      Like etap_exception:throws_ok/3, but with pattern matching
+-define(etap_throws_match(F, ErrMatch, Desc),
+        try F() of
+            _ -> etap:ok(nok, Desc)
+        catch
+            _:E ->
+                ?etap_match(E, ErrMatch, Desc)
+        end.
