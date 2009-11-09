@@ -47,7 +47,7 @@
 -export([
     ensure_test_server/0, start_etap_server/0, test_server/1,
     msg/1, msg/2, diag/1, diag/2, expectation_mismatch_message/3,
-    plan/1, end_tests/0, not_ok/2, ok/2, is/3, isnt/3, any/3, none/3,
+    plan/1, end_tests/0, not_ok/2, ok/2, is_ok/2, is/3, isnt/3, any/3, none/3,
     fun_is/3, expect_fun/3, expect_fun/4, is_greater/3, skip/1, skip/2,
     ensure_coverage_starts/0, ensure_coverage_ends/0, coverage_report/0,
     datetime/1, skip/3, bail/0, bail/1, test_state/0, failure_count/0
@@ -230,6 +230,13 @@ ok(Expr, Desc) -> evaluate(Expr == true, Expr, true, Desc).
 %%       Result = true | false
 %% @doc Assert that a statement is false.
 not_ok(Expr, Desc) -> evaluate(Expr == false, Expr, false, Desc).
+
+%% @spec is_ok(Expr, Desc) -> Result
+%%       Expr = any()
+%%       Desc = string()
+%%       Result = true | false
+%% @doc Assert that two values are the same.
+is_ok(Expr, Desc) -> evaluate(Expr == ok, Expr, ok, Desc).
 
 %% @spec is(Got, Expected, Desc) -> Result
 %%       Got = any()
