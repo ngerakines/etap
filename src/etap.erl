@@ -79,7 +79,10 @@ plan(N) when is_integer(N), N > 0 ->
 %% @todo This should probably be done in the test_server process.
 end_tests() ->
     ensure_coverage_ends(),
-    etap_server ! {self(), state},
+    case whereis(etap_server) of
+        undefined -> self() ! true;
+        _ -> etap_server ! {self(), state}
+    end,
     State = receive X -> X end,
     if
         State#test_state.planned == -1 ->
@@ -269,6 +272,8 @@ is_greater(ValueA, ValueB, Desc) when is_integer(ValueA), is_integer(ValueB) ->
 %%       Desc = string()
 %%       Result = true | false
 %% @doc Assert that an item is in a list.
+any(Got, Items, Desc) when is_function(Got) ->
+    is(lists:any(Got, Items), true, Desc);
 any(Got, Items, Desc) ->
     is(lists:member(Got, Items), true, Desc).
 
@@ -278,6 +283,8 @@ any(Got, Items, Desc) ->
 %%       Desc = string()
 %%       Result = true | false
 %% @doc Assert that an item is not in a list.
+none(Got, Items, Desc) when is_function(Got) ->
+    is(lists:any(Got, Items), false, Desc);
 none(Got, Items, Desc) ->
     is(lists:member(Got, Items), false, Desc).
 

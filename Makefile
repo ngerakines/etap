@@ -13,10 +13,6 @@ test: all
 	(cd t;$(MAKE))
 	(cd t;$(MAKE) test)
 
-prove: all
-	(cd t;$(MAKE))
-	prove t/*.t
-
 clean:
 	(cd src;$(MAKE) clean)
 	(cd t;$(MAKE) clean)

@@ -6,7 +6,7 @@
 -include("etap.hrl").
 
 start() ->
-    etap:plan(16),
+    etap:plan(21),
     etap:diag("Test the core etap module and it's functions."),
     etap:ok(true, "Proving etap:ok/2 needs true"),
     etap:not_ok(false, "Proving etap:not_ok/2 needs false"),
@@ -32,5 +32,5 @@ start() ->
     etap:expect_fun(fun(Got) -> case Got of {foo, _} -> true; _ -> false end end, {foo, bar}, "expect_fun/3 works with simple structures"),
     ?etap_match("abcdefg", "abc" ++ _, "?etap_match/3 works with simple lists"),
     ?etap_match({foo, bar}, {foo, _}, "?etap_match/3 works with simple structures"),
-    ?etap_match({foo, bar, baz}, {foo, _}, "Example ?etap_match/3 failure"),
+    etap:skip(fun() -> ?etap_match({foo, bar, baz}, {foo, _}, "Example ?etap_match/3 failure") end, "its ok for this to fail"),
     etap:end_tests().

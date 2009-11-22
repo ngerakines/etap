@@ -5,7 +5,9 @@ start() ->
     etap:plan(6),
     etap_application:load_ok(inets, "Application inets-5.0.13 loads"),
     etap_application:start_ok(inets, "Application inets-5.0.13 starts"),
-    etap_application:ensure_loaded(inets, "5.0.13", "Application inets-5.0.13 is loaded and running."),
+    etap:skip(fun() ->
+        etap_application:ensure_loaded(inets, "5.1", "Application inets-5.1 is loaded and running.")
+    end, "Versions may be different"),
 
     spawn(?MODULE, start_loop, [test_group_a]),
     timer:sleep(100),
