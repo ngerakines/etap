@@ -129,3 +129,13 @@ CREDITS
 2008-2009 Nick Gerakines<br />
 2007-2008 Jeremy Wall<br />
 2008 Jacob Vorreuter
+
+Special thanks to everyone that has contributed to this project.
+
+ * Paul J. Davis
+ * Brad Anderson
+ * Ken Pratt
+ * Kevin Ilchmann Jørgensen
+ * Benoit Chesneau
+ * Adam Kocoloski
+ * Jayson Vantuyl
