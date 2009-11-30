@@ -28,7 +28,7 @@
 %%       Result = true | false
 %% @doc Assert that a value matches a match spec.
 -define(etap_match(Got, Expected, Desc),
-        etap:expect_fun(fun(X) -> case X of Expected -> true; _ -> false end end, Got, Desc, ??Expected)).
+        etap:expect_fun(fun(XXXXXX) -> case XXXXXX of Expected -> true; _ -> false end end, Got, Desc, ??Expected)).
 
 %% @spec ?etap_throws_match(F, ErrMatch, Desc) -> Result
 %%       F = fun()
