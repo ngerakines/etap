@@ -166,16 +166,16 @@ output_lines(Data, WriteFD, SourceFD, LineNumber) ->
 %% @private
 out_line(Number, none, Line) ->
     PadNu = string:right(integer_to_list(Number), 5, $.),
-    io_lib:format("<span class=\"marked\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]);
+    io_lib:format("<span class=\"marked\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, mochiweb_html:escape(Line)]);
 out_line(Number, highlight, Line) ->
     PadNu = string:right(integer_to_list(Number), 5, $.),
-    io_lib:format("<span class=\"highlight\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]);
+    io_lib:format("<span class=\"highlight\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, mochiweb_html:escape(Line)]);
 out_line(Number, 0, Line) ->
     PadNu = string:right(integer_to_list(Number), 5, $.),
-    io_lib:format("<span class=\"uncovered\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]);
+    io_lib:format("<span class=\"uncovered\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, mochiweb_html:escape(Line)]);
 out_line(Number, _, Line) ->
     PadNu = string:right(integer_to_list(Number), 5, $.),
-    io_lib:format("<span class=\"covered\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, Line]).
+    io_lib:format("<span class=\"covered\"><a name=\"line~p\"></a>~s ~s</span>", [Number, PadNu, mochiweb_html:escape(Line)]).
 
 %% @private
 datas_match([], _) -> {false, []};
