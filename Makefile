@@ -27,3 +27,5 @@ package: clean
 install:
 	mkdir -p $(prefix)/$(LIBDIR)/etap-$(VERSION)/ebin
 	for i in ebin/*.beam; do install $$i $(prefix)/$(LIBDIR)/etap-$(VERSION)/$$i ; done
+	mkdir -p $(prefix)/$(LIBDIR)/etap-$(VERSION)/include
+	for i in include/*.hrl; do install $$i $(prefix)/$(LIBDIR)/etap-$(VERSION)/$$i ; done
