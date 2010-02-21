@@ -5,6 +5,7 @@ VERSION=0.3.4
 all:
 	mkdir -p ebin
 	(cd src;$(MAKE))
+	cp -f src/etap.app ebin/
 
 doc:
 	(cd src; $(MAKE) doc)
