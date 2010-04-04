@@ -44,16 +44,60 @@
 %% a number of etap tests and then calling eta:end_tests/0. Please refer to
 %% the Erlang modules in the t directory of this project for example tests.
 -module(etap).
--export([
-    ensure_test_server/0, start_etap_server/0, test_server/1,
-    msg/1, msg/2, diag/1, diag/2, expectation_mismatch_message/3,
-    plan/1, end_tests/0, not_ok/2, ok/2, is_ok/2, is/3, isnt/3, any/3, none/3,
-    fun_is/3, expect_fun/3, expect_fun/4, is_greater/3, skip/1, skip/2,
-    ensure_coverage_starts/0, ensure_coverage_ends/0, coverage_report/0,
-    datetime/1, skip/3, bail/0, bail/1, test_state/0, failure_count/0
-]).
--record(test_state, {planned = 0, count = 0, pass = 0, fail = 0, skip = 0, skip_reason = ""}).
 -vsn("0.3.4").
+
+-export([
+    ensure_test_server/0,
+    start_etap_server/0,
+    test_server/1,
+    msg/1, msg/2,
+    diag/1, diag/2,
+    expectation_mismatch_message/3,
+    plan/1,
+    end_tests/0,
+    not_ok/2, ok/2, is_ok/2, is/3, isnt/3, any/3, none/3,
+    fun_is/3, expect_fun/3, expect_fun/4,
+    is_greater/3,
+    skip/1, skip/2,
+    datetime/1,
+    skip/3,
+    bail/0, bail/1,
+    test_state/0, failure_count/0
+]).
+
+-export([
+    contains_ok/3,
+    is_before/4
+]).
+
+-export([
+    is_pid/2,
+    is_alive/2,
+    is_mfa/3
+]).
+
+-export([
+    loaded_ok/2,
+    can_ok/2, can_ok/3,
+    has_attrib/2, is_attrib/3,
+    is_behaviour/2
+]).
+
+-export([
+    dies_ok/2,
+    lives_ok/2,
+    throws_ok/3
+]).
+
+
+-record(test_state, {
+    planned = 0,
+    count = 0,
+    pass = 0,
+    fail = 0,
+    skip = 0,
+    skip_reason = ""
+}).
 
 %% @spec plan(N) -> Result
 %%       N = unknown | skip | {skip, string()} | integer()
@@ -94,44 +138,6 @@ end_tests() ->
         undefined -> ok;
         _ -> etap_server ! done, ok
     end.
-
-%% @private
-ensure_coverage_starts() ->
-    case os:getenv("COVER") of
-        false -> ok;
-        _ ->
-            BeamDir = case os:getenv("COVER_BIN") of false -> "ebin"; X -> X end,
-            cover:compile_beam_directory(BeamDir)
-    end.
-
-%% @private
-%% @doc Attempts to write out any collected coverage data to the cover/
-%% directory. This function should not be called externally, but it could be.
-ensure_coverage_ends() ->
-    case os:getenv("COVER") of
-        false -> ok;
-        _ ->
-            filelib:ensure_dir("cover/"),
-            Name = lists:flatten([
-                io_lib:format("~.16b", [X]) || X <- binary_to_list(erlang:md5(
-                     term_to_binary({make_ref(), now()})
-                ))
-            ]),
-            cover:export("cover/" ++ Name ++ ".coverdata")
-    end.
-
-%% @spec coverage_report() -> ok
-%% @doc Use the cover module's covreage report builder to create code coverage
-%% reports from recently created coverdata files.
-coverage_report() ->
-    [cover:import(File) || File <- filelib:wildcard("cover/*.coverdata")],
-    lists:foreach(
-        fun(Mod) ->
-            cover:analyse_to_file(Mod, atom_to_list(Mod) ++ "_coverage.txt", [])
-        end,
-        cover:imported_modules()
-    ),
-    ok.
 
 bail() ->
     bail("").
@@ -364,8 +370,113 @@ begin_skip(Reason) ->
 end_skip() ->
     etap_server ! {self(), end_skip}.
 
-% ---
-% Internal / Private functions
+%% @spec contains_ok(string(), string(), string()) -> true | false
+%% @doc Assert that a string is contained in another string.
+contains_ok(Source, String, Desc) ->
+    etap:isnt(
+        string:str(Source, String),
+        0,
+        Desc
+    ).
+
+%% @spec is_before(string(), string(), string(), string()) -> true | false
+%% @doc Assert that a string comes before another string within a larger body.
+is_before(Source, StringA, StringB, Desc) ->
+    etap:is_greater(
+        string:str(Source, StringB),
+        string:str(Source, StringA),
+        Desc
+    ).
+
+%% @doc Assert that a given variable is a pid.
+is_pid(Pid, Desc) when is_pid(Pid) -> etap:ok(true, Desc);
+is_pid(_, Desc) -> etap:ok(false, Desc).
+
+%% @doc Assert that a given process/pid is alive.
+is_alive(Pid, Desc) ->
+    etap:ok(erlang:is_process_alive(Pid), Desc).
+
+%% @doc Assert that the current function of a pid is a given {M, F, A} tuple.
+is_mfa(Pid, MFA, Desc) ->
+    etap:is({current_function, MFA}, erlang:process_info(Pid, current_function), Desc).
+
+%% @spec loaded_ok(atom(), string()) -> true | false
+%% @doc Assert that a module has been loaded successfully.
+loaded_ok(M, Desc) when is_atom(M) ->
+    etap:fun_is(fun({module, _}) -> true; (_) -> false end, code:load_file(M), Desc).
+
+%% @spec can_ok(atom(), atom()) -> true | false
+%% @doc Assert that a module exports a given function.
+can_ok(M, F) when is_atom(M), is_atom(F) ->
+    Matches = [X || {X, _} <- M:module_info(exports), X == F],
+    etap:ok(Matches > 0, lists:concat([M, " can ", F])).
+
+%% @spec can_ok(atom(), atom(), integer()) -> true | false
+%% @doc Assert that a module exports a given function with a given arity.
+can_ok(M, F, A) when is_atom(M); is_atom(F), is_number(A) ->
+    Matches = [X || X <- M:module_info(exports), X == {F, A}],
+    etap:ok(Matches > 0, lists:concat([M, " can ", F, "/", A])).
+
+%% @spec has_attrib(M, A) -> true | false
+%%       M = atom()
+%%       A = atom()
+%% @doc Asserts that a module has a given attribute.
+has_attrib(M, A) when is_atom(M), is_atom(A) ->
+    etap:isnt(
+        proplists:get_value(A, M:module_info(attributes), 'asdlkjasdlkads'),
+        'asdlkjasdlkads',
+        lists:concat([M, " has attribute ", A])
+    ).
+
+%% @spec has_attrib(M, A. V) -> true | false
+%%       M = atom()
+%%       A = atom()
+%%       V = any()
+%% @doc Asserts that a module has a given attribute with a given value.
+is_attrib(M, A, V) when is_atom(M) andalso is_atom(A) ->
+    etap:is(
+        proplists:get_value(A, M:module_info(attributes)),
+        [V],
+        lists:concat([M, "'s ", A, " is ", V])
+    ).
+
+%% @spec is_behavior(M, B) -> true | false
+%%       M = atom()
+%%       B = atom()
+%% @doc Asserts that a given module has a specific behavior.
+is_behaviour(M, B) when is_atom(M) andalso is_atom(B) ->
+    is_attrib(M, behaviour, B).
+
+%% @doc Assert that an exception is raised when running a given function.
+dies_ok(F, Desc) ->
+    case (catch F()) of
+        {'EXIT', _} -> etap:ok(true, Desc);
+        _ -> etap:ok(false, Desc)
+    end.
+
+%% @doc Assert that an exception is not raised when running a given function.
+lives_ok(F, Desc) ->
+    etap:is(try_this(F), success, Desc).
+
+%% @doc Assert that the exception thrown by a function matches the given exception.
+throws_ok(F, Exception, Desc) ->
+    try F() of
+        _ -> etap:ok(nok, Desc)
+    catch
+        _:E ->
+            etap:is(E, Exception, Desc)
+    end.
+
+%% @private
+%% @doc Run a function and catch any exceptions.
+try_this(F) when is_function(F, 0) ->
+    try F() of
+        _ -> success
+    catch
+        throw:E -> {throw, E};
+        error:E -> {error, E};
+        exit:E -> {exit, E}
+    end.
 
 %% @private
 %% @doc Start the etap_server process if it is not running already.
