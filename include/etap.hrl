@@ -43,4 +43,4 @@
         catch
             _:E ->
                 ?etap_match(E, ErrMatch, Desc)
-        end.
+        end).
