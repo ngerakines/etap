@@ -5,7 +5,7 @@ etap is a collection of Erlang modules that provide a TAP testing client library
 
 As per the TAP wiki:
 
-> TAP, the Test Anything Protocol, is a simple text-based interface between testing modules in a test harness. TAP started life as part of the test harness for Perl but now has implementations in C/C++, Python, PHP, Perl and probably others by the time you read this. 
+> TAP, the Test Anything Protocol, is a simple text-based interface between testing modules in a test harness. TAP started life as part of the test harness for Perl but now has implementations in C/C++, Python, PHP, Perl and probably others by the time you read this.
 
 These modules are not meant to compete with eunit, but to offer a more general testing facility that isn't provided by eunit.
 
@@ -42,23 +42,23 @@ There are many examples in t/\*.erl.
 BUILD & INSTALL
 ===============
 
+Test and build
+--------------
+
 To build this library, from the root directory execute the `make` command. You should also execute the `make test` command to verify that the library functions correctly on your system. If you have the Perl module TAP::Harness you can use it to collect and display test results using the `make prove` target.
 
     $ make
     $ make test
     $ make prove
 
-If you choose to run the `make test` command then please be sure to `make clean` after to remove any of the temporary beam files created by the tests in the `t/` directory.
+then you can place the generated ebin/etap.beam in your ebin folder.
 
-The included tests cover the basic functionality of the etap modules. They can also be used as a reference when writing your own tests. 
 
-To install etap you need to create the `etap/ebin/` directory in your current Erlang library and copy all of the .beam files created by the `make` file.
+Use rebar
+---------
 
-    $ sudo mkdir -p /usr/lib/erlang/lib/etap-0.3.4/ebin
-    $ make clean && make
-    $ sudo cp ebin/*.beam /usr/lib/erlang/lib/etap-0.3.4/ebin/
-
-The `make dist-src` target can be used to create source distributions for further packaging and deployment.
+Etap can be added to your dependencies in the `rebar.config` file of
+your application.
 
 USING TAP::Harness
 ==================
