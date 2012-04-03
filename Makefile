@@ -1,31 +1,25 @@
-LIBDIR=$(shell erl -eval 'io:format("~s~n", [code:lib_dir()])' -s init stop -noshell)
-.PHONY: doc
-VERSION=0.3.4
+ERL		?= erl
+ERLC	?= erlc
 
 all:
-	mkdir -p ebin
-	(cd src;$(MAKE))
-	cp -f src/etap.app ebin/
+	rebar compile
 
 doc:
-	(cd src; $(MAKE) doc)
+	rebar doc
 
 test: all
-	(cd t;$(MAKE))
-	(cd t;$(MAKE) test)
+	prove t/*.t
+
+verbose-test: all
+	prove -v t/*.t
+
+cover: all
+	COVER=1 prove t/*.t
+	@$(ERL) -detached -noshell -eval 'etap_report:create()' -pa ebin -s init stop
 
 clean:
-	(cd src;$(MAKE) clean)
-	(cd t;$(MAKE) clean)
+	rebar clean
 	rm -rf cover/
+	rm -f doc/*.html doc/*.css doc/edoc-info doc/*.png
 
-package: clean
-	@mkdir etap-$(VERSION)/ && cp -rf ChangeLog Makefile README.markdown scripts src support t etap-$(VERSION)
-	@COPYFILE_DISABLE=true tar zcf etap-$(VERSION).tgz etap-$(VERSION)
-	@rm -rf etap-$(VERSION)/
-
-install:
-	mkdir -p $(prefix)/$(LIBDIR)/etap-$(VERSION)/ebin
-	for i in ebin/*.beam; do install $$i $(prefix)/$(LIBDIR)/etap-$(VERSION)/$$i ; done
-	mkdir -p $(prefix)/$(LIBDIR)/etap-$(VERSION)/include
-	for i in include/*.hrl; do install $$i $(prefix)/$(LIBDIR)/etap-$(VERSION)/$$i ; done
+.PHONY: doc

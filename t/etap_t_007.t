@@ -1,8 +1,8 @@
--module(etap_t_011).
+#!/usr/bin/env escript
+%% -*- erlang -*-
+%%! -pa ./ebin -pa ./t
 
--export([start/0]).
-
-start() ->
+main(_) ->
     etap:plan(skip),
     _Skipped = fun() ->
         etap:skip(fun() ->
