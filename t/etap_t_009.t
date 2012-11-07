@@ -1,7 +1,8 @@
--module(etap_t_013).
--export([start/0]).
+#!/usr/bin/env escript
+%% -*- erlang -*-
+%%! -pa ./ebin -pa ./t
 
-start() ->
+main(_) ->
     etap:plan(unknown),
     etap:is(1, 1, "one down"),
     etap:is(3, 3, "two down"),

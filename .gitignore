@@ -3,3 +3,12 @@ doc
 *.swp
 *.dump
 edoc-info
+bin
+*.swp
+*.dump
+edoc-info
+.DS_Store
+doc/*.html
+doc/*.css
+doc/erlang.png
+doc/edoc-info

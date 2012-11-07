@@ -1,8 +1,8 @@
--module(etap_t_012).
+#!/usr/bin/env escript
+%% -*- erlang -*-
+%%! -pa ./ebin -pa ./t
 
--export([start/0]).
-
-start() ->
+main(_) ->
     etap:plan({skip, "Requires psychic powers"}),
     _Skipped = fun() ->
         etap:skip(fun() ->

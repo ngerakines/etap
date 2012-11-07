@@ -1,8 +1,8 @@
--module(etap_t_010).
+#!/usr/bin/env escript
+%% -*- erlang -*-
+%%! -pa ./ebin -pa ./t
 
--export([start/0]).
-
-start() ->
+main(_) ->
     etap:plan(2),
     etap:skip(fun() ->
         etap:ok(false, "This shouldn't be false ...")
