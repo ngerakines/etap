@@ -1,11 +1,11 @@
-ERL		?= erl
+ERL	?= erl
 ERLC	?= erlc
 
 all:
-	rebar compile
+	./rebar compile
 
 doc:
-	rebar doc
+	./rebar doc
 
 test: all
 	prove t/*.t
@@ -18,7 +18,7 @@ cover: all
 	@$(ERL) -detached -noshell -eval 'etap_report:create()' -pa ebin -s init stop
 
 clean:
-	rebar clean
+	./rebar clean
 	rm -rf cover/
 	rm -f doc/*.html doc/*.css doc/edoc-info doc/*.png
 
