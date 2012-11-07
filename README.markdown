@@ -49,7 +49,6 @@ To build this library, from the root directory execute the `make` command. You s
 
     $ make
     $ make test
-    $ make prove
 
 then you can place the generated ebin/etap.beam in your ebin folder.
 
