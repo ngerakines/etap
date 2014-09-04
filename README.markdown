@@ -10,7 +10,7 @@ As per the TAP wiki:
 These modules are not meant to compete with eunit, but to offer a more general testing facility that isn't provided by eunit.
 
     http://en.wikipedia.org/wiki/Test_Anything_Protocol
-    http://testanything.org/wiki/index.php/Main_Page
+    http://testanything.org
 
 CREATING TESTS
 ==============

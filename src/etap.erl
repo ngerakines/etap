@@ -25,7 +25,7 @@
 %% @author Jeremy Wall <jeremy@marzhillstudios.com>
 %% @version 0.3.4
 %% @copyright 2007-2008 Jeremy Wall, 2008-2009 Nick Gerakines
-%% @reference http://testanything.org/wiki/index.php/Main_Page
+%% @reference http://testanything.org
 %% @reference http://en.wikipedia.org/wiki/Test_Anything_Protocol
 %% @todo Finish implementing the skip directive.
 %% @todo Document the messages handled by this receive loop.
