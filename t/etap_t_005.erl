@@ -3,11 +3,11 @@
 
 start() ->
     etap:plan(4),
-    etap_application:start_ok(inets, "Application inets starts"),
-    etap_web:simple_200("http://socklabs.com/", "Web request against http://socklabs.com/ returns a 200"),
-    etap_web:simple_404("http://socklabs.com/404.html", "Web request against http://socklabs.com/404.html returns a 404"),
+    etap:start_ok(inets, "Application inets starts"),
+    etap:simple_200("http://socklabs.com/", "Web request against http://socklabs.com/ returns a 200"),
+    etap:simple_404("http://socklabs.com/404.html", "Web request against http://socklabs.com/404.html returns a 404"),
     
-    Request = etap_web:build_request(get, "http://socklabs.com/", [], []),
+    Request = etap:build_request(get, "http://socklabs.com/", [], []),
     Request:status_is(200, "Web request against http://socklabs.com/ returns a 200"),
     
     etap:end_tests().
